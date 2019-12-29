@@ -157,4 +157,5 @@ class Zabawa(commands.Cog):
 
 
 def setup(bot):
+    print("LOADED COGS/ZABAWA")
     bot.add_cog(Zabawa(bot))

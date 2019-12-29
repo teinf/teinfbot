@@ -51,46 +51,7 @@ async def on_message_delete(message):
         msgEm.set_footer(text=f'{message.channel}, ID: {message.author.id}')
         logsChannel = bot.get_channel(logChannelID)
         await logsChannel.send(embed=msgEm)
-
-
-# @bot.event
-# async def on_member_join(member):
-#     welcomeChannel = bot.get_channel(welcomeChannelID)
-#     welcomes = []
-#     with open(os.path.join(currentDirectory, 'server_join.txt'), 'r') as f:
-#         for line in f:
-#             welcomes.append(line.strip())
-
-#     randomWelcome = random.choice(welcomes).replace("{user}", member.mention)
-
-#     # wysyłanie wiadomości embed
-#     welcomeEm = discord.Embed(
-#         title="PRZYBYŁ", description=randomWelcome, colour=discord.Color.green())
-#     await welcomeChannel.send(embed=welcomeEm)
-
-#     # tylko userowi można wysłać prywatną wiadomość
-#     user = bot.get_user(member.id)
-#     await user.send("Witamy na serwerze itd...")
-
-
-# @bot.event
-# async def on_member_remove(member):
-#     welcomeChannel = bot.get_channel(welcomeChannelID)
-#     leaves = []
-#     with open(os.path.join(currentDirectory, 'server_leave.txt'), 'r') as f:
-#         for line in f:
-#             leaves.append(line.strip())
-
-#     randomLeave = random.choice(leaves).replace("{user}", member.mention)
-
-#     # wysyłanie embed
-#     welcomeEm = discord.Embed(
-#         title="ODSZEDŁ", description=randomLeave, colour=discord.Color.red())
-#     await welcomeChannel.send(embed=welcomeEm)
-
-# @bot.event
-# async def on_error(event, *args, **kwargs):
-#     print(event,args,kwargs)
+        
 
 extensionPlace = 'cogs'  # folder w którym są rozszerzenia
 extensionNames = ['games', 'interaktywne', 'kasyno', 'moderacja',
@@ -104,5 +65,5 @@ if __name__ == '__main__':
         except Exception as error:
             print(f'{extension} nie mozna załadować. [{error}]')
 
-token = "NTM0NTYwMzQyNjg5MzE2ODY0.XgczZg.y4qYJ6KYNLv0nTMBXqyvdDLP6qM"
-bot.run(token)
+access_token= os.environ["ACCESS_TOKEN"]
+bot.run(access_token)

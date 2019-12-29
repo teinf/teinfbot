@@ -56,4 +56,5 @@ class Kasyno(commands.Cog):
             await ctx.send(embed=em,delete_after=60)
 
 def setup(bot):
+    print("LOADED COGS/KASYNO")
     bot.add_cog(Kasyno(bot))

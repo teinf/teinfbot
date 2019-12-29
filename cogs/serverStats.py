@@ -32,9 +32,8 @@ class ServerStats(commands.Cog):
       self.treeChannel = self.bot.get_channel(660427011642359811) 
       self.refreshStats.start()
 
-    @tasks.loop(seconds=15.0)
+    @tasks.loop(seconds=30.0)
     async def refreshStats(self):
-      print("Refreshed stats...")
       r = requests.get('https://teamtrees.org')
       r = r.text
       soup = BeautifulSoup(r, "html.parser")
@@ -61,4 +60,5 @@ class ServerStats(commands.Cog):
       # await self.offlineChannel.edit(name=offlineTemplate.format(offlineMembers))
 
 def setup(bot):
+    print("LOADED COGS/SERVERSTATS")
     bot.add_cog(ServerStats(bot))

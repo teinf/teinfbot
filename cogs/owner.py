@@ -53,4 +53,5 @@ class Owner(commands.Cog):
 
 
 def setup(bot):
+    print("LOADED COGS/OWNER")
     bot.add_cog(Owner(bot))

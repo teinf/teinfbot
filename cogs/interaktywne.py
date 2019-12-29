@@ -64,4 +64,5 @@ class Interaktywne(commands.Cog):
 
 
 def setup(bot):
+    print("LOADED COGS/INTERAKTYWNE")
     bot.add_cog(Interaktywne(bot))

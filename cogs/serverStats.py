@@ -60,5 +60,4 @@ class ServerStats(commands.Cog):
       # await self.offlineChannel.edit(name=offlineTemplate.format(offlineMembers))
 
 def setup(bot):
-    print("LOADED COGS/SERVERSTATS")
     bot.add_cog(ServerStats(bot))

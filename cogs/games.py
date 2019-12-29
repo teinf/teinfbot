@@ -46,5 +46,4 @@ class Games(commands.Cog):
         await ctx.send(embed=em,delete_after=20)
 
 def setup(bot):
-    print("LOADED COGS/GAMES")
     bot.add_cog(Games(bot))

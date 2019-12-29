@@ -204,5 +204,4 @@ class Narzedzia(commands.Cog):
 
 
 def setup(bot):
-    print("LOADED COGS/NARZEDZIA")
     bot.add_cog(Narzedzia(bot))

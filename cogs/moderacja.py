@@ -17,5 +17,4 @@ class Moderacja(commands.Cog):
 
 
 def setup(bot):
-    print("LOADED COGS/MODERACJA")
     bot.add_cog(Moderacja(bot))

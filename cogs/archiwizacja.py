@@ -15,7 +15,7 @@ class Logs(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         # wysyłanie wiadomosci do logów
-        if message.channel.id != self.self.logChannelID and message.author.id != self.bot.user.id:
+        if message.channel.id != self.logChannelID and message.author.id != self.bot.user.id:
             msgEm = discord.Embed(
                 title=f"{message.author}", description=f"Wiadomość: {message.content}", colour=discord.Color.green())
             msgEm.set_footer(
@@ -25,7 +25,7 @@ class Logs(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         # wysyłanie wiadomosci do logów
-        if message.channel.id != self.logChannelID and message.author.id != bot.user.id:
+        if message.channel.id != self.logChannelID and message.author.id != self.bot.user.id:
             msgEm = discord.Embed(
                 title=f"USUNIĘTO: {message.author}", description=f"Wiadomość: {message.content}", colour=discord.Color.red())
             msgEm.set_footer(

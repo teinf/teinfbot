@@ -29,11 +29,11 @@ class Logs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        await self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
+        self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
-        await self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
+        self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
 
     @commands.Cog.listener()
     async def on_error(self, message):

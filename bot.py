@@ -1,12 +1,11 @@
 import os
 import discord
 from discord.ext import commands
-from discord.ext.commands import Bot
-
-currentDirectory = os.getcwd()
 
 prefix = "."
 bot = commands.Bot(command_prefix=prefix)
+client = discord.Client()
+
 
 @bot.event
 async def on_ready():
@@ -22,16 +21,18 @@ async def on_message(message):
 
 
 # ładowanie rozszerzeń
-extensionsPlaceName = 'cogs'  # folder w którym są rozszerzenia
-extensionsPath = os.path.join(currentDirectory, extensionsPlaceName)
-extensionsElements = os.listdir(extensionsPath)
-extensions = []
-for extension in extensionsElements:
-    if extension[-3:] == ".py":
-        extensions.append(extensionsPlaceName + "." + extension[:-3])
+def get_extensions(ext_dir, name: str):
+    ext_folder = name  # folder w którym są rozszerzenia
+    ext_path = os.path.join(ext_dir, ext_folder)
+    ext_elems = os.listdir(ext_path)
+
+    for ext in ext_elems:
+        if ext[-3:] == ".py":
+            yield name+"."+ext[:-3]
+
 
 if __name__ == '__main__':
-    for extension in extensions:
+    for extension in get_extensions(os.getcwd(), 'cogs'):
         try:
             bot.load_extension(extension)
         except Exception as error:
@@ -39,5 +40,6 @@ if __name__ == '__main__':
         else:
             print("LOADED " + extension)
 
-access_token= os.environ["ACCESS_TOKEN"]
+# access_token = os.environ["ACCESS_TOKEN"]
+access_token = "NTM0NTYwMzQyNjg5MzE2ODY0.XgtNCQ.5X7VjGC5pEM8OUBYMAyp8rRTeDE"
 bot.run(access_token)

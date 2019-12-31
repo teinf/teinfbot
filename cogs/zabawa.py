@@ -120,7 +120,7 @@ class Zabawa(commands.Cog):
             kolor = discord.Colour.from_rgb(0, 0, 0)
             znak = "aż"
 
-        await ctx.send("Przykłada chuja do linijki...", delete_after=5)
+        await ctx.send("Przykłada chuja do linijki...")
 
         em = discord.Embed(title="\U0001F51E Kutas \U0001F51E",
                            description=f'{ctx.message.author} Twój kutas ma {znak} **{losowa}** cm', colour=kolor)
@@ -135,7 +135,7 @@ class Zabawa(commands.Cog):
         losowa_rasa = random.choice(rasy)
         em = discord.Embed(
             title="RASA", description=f"{ctx.message.author} twoja rasa to {losowa_rasa}", colour=discord.Colour.blue())
-        await ctx.send(embed=em, delete_after=20)
+        await ctx.send(embed=em)
         await ctx.message.delete()
 
     @commands.command()

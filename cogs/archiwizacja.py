@@ -1,4 +1,3 @@
-import asyncio
 import discord
 from discord.ext import commands
 
@@ -9,28 +8,36 @@ class Logs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.logChannelID = 660770250001874944
-        self.logsChannel = self.bot.get_channel(self.logChannelID)
+        self.logsChannel = self.bot.get_channel(660770250001874944)
+        self.errorChannel = self.bot.get_channel(660813978154303518)
+
+    async def send_log(self, send_channel: discord.TextChannel, msg: discord.Message, desc: str,
+                       msg_color: discord.Color):
+        """WYSYŁANIE WIADOMOSCI DO LOGOW, DO WSKAZANEGO KANAŁU"""
+        if msg.channel != self.logsChannel and msg.author.id != self.bot.user.id:
+            msg_em = discord.Embed(
+                title=msg.author,
+                description=desc,
+                colour=msg_color
+            )
+
+            msg_em.set_footer(
+                text=f'{msg.channel}, ID: {msg.author.id}'
+            )
+
+            await send_channel.send(embed=msg_em)
 
     @commands.Cog.listener()
-    async def on_message(self, message):
-        # wysyłanie wiadomosci do logów
-        if message.channel.id != self.logChannelID and message.author.id != self.bot.user.id:
-            msgEm = discord.Embed(
-                title=f"{message.author}", description=f"Wiadomość: {message.content}", colour=discord.Color.green())
-            msgEm.set_footer(
-                text=f'{message.channel}, ID: {message.author.id}')
-            await self.logsChannel.send(embed=msgEm)
+    async def on_message(self, message: discord.Message):
+        await self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
-        # wysyłanie wiadomosci do logów
-        if message.channel.id != self.logChannelID and message.author.id != self.bot.user.id:
-            msgEm = discord.Embed(
-                title=f"USUNIĘTO: {message.author}", description=f"Wiadomość: {message.content}", colour=discord.Color.red())
-            msgEm.set_footer(
-                text=f'{message.channel}, ID: {message.author.id}')
-            await self.logsChannel.send(embed=msgEm)
+        await self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
+
+    @commands.Cog.listener()
+    async def on_error(self, message):
+        await self.send_log(self.errorChannel, message, message.content, discord.Color.dark_red())
 
 
 def setup(bot):

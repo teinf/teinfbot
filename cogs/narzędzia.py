@@ -10,13 +10,17 @@ class Narzedzia(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()  # wyświetla link z obrazem użtykownika @nick, jeśli member pusty = "None" to wywołamy na autorze wiadomości
+    @commands.command()
     async def avatar(self, ctx, member: discord.Member = None):
+        """ Wyświetla link z obrazem użtykownika @nick
+        jeśli nie podamy użytkownika, to wywołamy na sobie """
         member = member or ctx.message.author
         await ctx.send(f"{member.avatar_url}", delete_after=20)
 
-    @commands.command()  # wyświetla informacje o danym użytkowniku @nick, jeśli member = "None" to wywołamy na autorze wiadomości
+    @commands.command()
     async def info(self, ctx, member: discord.Member = None):
+        """ Wyświetla informacje o użytkowniku @nick
+        jeśli nie podamy użytkownika, to wywołamy na sobie """
         member = member or ctx.message.author
         informacje = {  # key : value,
             "Nick": member.name,
@@ -39,6 +43,7 @@ class Narzedzia(commands.Cog):
 
     @commands.command()
     async def pobudka(self, ctx):
+        """ Pokazuje o której powinniśmy wstać jeśli pójdziemy spać teraz """
         dateTimeNow = datetime.datetime.now()
 
         def jumpSleepCycle(amount=1):
@@ -53,49 +58,50 @@ class Narzedzia(commands.Cog):
             formattedStr = strHourAndMinutes.format(jumpSleepCycle(i))
             wakeUpHours.append(formattedStr)
 
-        strWakeUpHours = " lub ".join(wakeUpHours)
-        await ctx.send(f"{ctx.message.author.mention} jeśli chciałbyś iść teraz spać to \npowinienieś ustawić budzik na te godziny: \n{strWakeUpHours}")
+        str_wake_up_hours = " lub ".join(wakeUpHours)
+        await ctx.send(f"{ctx.message.author.mention} jeśli chciałbyś iść teraz spać to \npowinienieś ustawić budzik na te godziny: \n{str_wake_up_hours}")
 
     @commands.command(aliases=["alarm"])
     async def budzik(self, ctx, hour: int = 7, minutes: int = 0, *args):
+        """ Gdy podamy godzinę o której chcemy wstać to pokazuje
+         o której godzinie powinniśmy pójść spać np. .budzik 7 30 """
+        alarm_time = datetime.timedelta(hours=hour, minutes=minutes)
 
-        alarmTime = datetime.timedelta(hours=hour, minutes=minutes)
+        def jump_sleep_cycle(amount=1):
+            sleep_cycle = datetime.timedelta(hours=1, minutes=30)
+            avg_time_to_fall_asleep = datetime.timedelta(minutes=15)
+            return alarm_time - sleep_cycle*int(amount) - avg_time_to_fall_asleep
 
-        def jumpSleepCycle(amount=1):
-            sleepCycle = datetime.timedelta(hours=1, minutes=30)
-            avgTimeToFallAsleep = datetime.timedelta(minutes=15)
-            return alarmTime - sleepCycle*int(amount) - avgTimeToFallAsleep
-
-        def convertTimeDeltaToDHM(td):
+        def convert_time_delta_to_dhm(td):
             """Converts timedelta to days, hours, minutes"""
             return td.days, td.seconds//3600, (td.seconds//60) % 60
 
-        strHourAndMinutes = "**`{0:02}:{1:02}`**"
+        str_hour_and_minutes = "**`{0:02}:{1:02}`**"
 
-        GoToBedHours = []
+        go_to_bed_hours = []
         for i in range(2, 7):
-            td_days, td_hours, td_minutes = convertTimeDeltaToDHM(
-                jumpSleepCycle(i))
-            formattedStr = strHourAndMinutes.format(td_hours, td_minutes)
-            GoToBedHours.append(formattedStr)
+            td_days, td_hours, td_minutes = convert_time_delta_to_dhm(
+                jump_sleep_cycle(i))
+            formatted_str = str_hour_and_minutes.format(td_hours, td_minutes)
+            go_to_bed_hours.append(formatted_str)
             del td_days
 
-        strGoToBedHours = " lub ".join(reversed(GoToBedHours))
-        await ctx.send(f"{ctx.message.author.mention} aby wstać o {strHourAndMinutes.format(hour,minutes)} powinienieś położyć się do łóżka o \n{strGoToBedHours}")
+        str_go_to_bed_hours = " lub ".join(reversed(go_to_bed_hours))
+        await ctx.send(f"{ctx.message.author.mention} aby wstać o {str_hour_and_minutes.format(hour,minutes)} powinienieś położyć się do łóżka o \n{str_go_to_bed_hours}")
 
     @commands.command()
     async def kurs(self, ctx, nominal=None, amount=10):
         with open('cogs/txt/currency.json', 'r') as f:
             currencies = json.load(f)
 
-        if nominal == None:
-            nominalsList = [nominalStr for nominalStr in currencies]
+        if nominal is None:
+            nominals_list = [nominalStr for nominalStr in currencies]
             # EUR : Euro
 
             em = discord.Embed(
                 title=":moneybag: DOSTĘPNE WALUTY :moneybag:", colour=discord.Colour.gold())
 
-            for curr in nominalsList:
+            for curr in nominals_list:
                 nominal = currencies.get(curr)
 
                 CODE = nominal['code']

@@ -1,6 +1,3 @@
-import discord
-import asyncio
-import random
 from discord.ext import commands
 
 
@@ -23,7 +20,6 @@ class Owner(commands.Cog):
         else:
             await ctx.send('**`SUKCES!`**')
 
-    @commands.has_role("Moderator")
     @commands.command(name='unload', hidden=True)
     @commands.is_owner()
     async def unload_cog(self, ctx, *, cog: str):

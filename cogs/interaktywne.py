@@ -8,9 +8,9 @@ class Interaktywne(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, name="losowanie_teamu", aliases=["team_losowanie", "team_l", "losowanie_t", "lt"])
+    @commands.command(pass_context=True, name="lt")
     @commands.cooldown(1, 60, commands.BucketType.default)
-    async def losowanie_teamu(self, ctx, numberOfTeams: int = 2):
+    async def losowanie_teamu(self, ctx, num_of_teams: int = 2):
         """LOSUJE TEAM !"""
 
         author = ctx.message.author  # osoba która wywołała komende
@@ -44,8 +44,8 @@ class Interaktywne(commands.Cog):
         random.shuffle(uczestnicy)  # mieszanie listy
 
         teams = []
-        for i in range(1, numberOfTeams+1):
-            teams.append(uczestnicy[i-1::numberOfTeams])
+        for i in range(1, num_of_teams + 1):
+            teams.append(uczestnicy[i-1::num_of_teams])
 
         message = await ctx.get_message(message.id)
         await message.delete()  # usuwanie wcześniej wysłanych wiadomości
@@ -60,7 +60,7 @@ class Interaktywne(commands.Cog):
             circle = random.choice(circles)
             team_embed = discord.Embed(
                 title=f"{circle} TEAM {i+1} {circle}", description=teamStr, colour=color())
-            await ctx.send(embed=team_embed, delete_after=120)
+            await ctx.send(embed=team_embed)
 
 
 def setup(bot):

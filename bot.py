@@ -40,6 +40,5 @@ if __name__ == '__main__':
         else:
             print("LOADED " + extension)
 
-# access_token = os.environ["ACCESS_TOKEN"]
-access_token = "NTM0NTYwMzQyNjg5MzE2ODY0.XgtNCQ.5X7VjGC5pEM8OUBYMAyp8rRTeDE"
+access_token = os.environ["ACCESS_TOKEN"]
 bot.run(access_token)

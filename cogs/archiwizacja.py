@@ -28,7 +28,7 @@ class Logs(commands.Cog):
             await send_channel.send(embed=msg_em)
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message):
         await self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
 
     @commands.Cog.listener()

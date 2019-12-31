@@ -14,7 +14,7 @@ class Logs(commands.Cog):
     async def send_log(self, send_channel: discord.TextChannel, msg: discord.Message, desc: str,
                        msg_color: discord.Color):
         """WYSYŁANIE WIADOMOSCI DO LOGOW, DO WSKAZANEGO KANAŁU"""
-        if msg.channel != self.logsChannel and msg.author.id != self.bot.user.id:
+        if msg.channel.id != send_channel and msg.author.id != self.bot.user.id:
             msg_em = discord.Embed(
                 title=msg.author,
                 description=desc,
@@ -29,11 +29,11 @@ class Logs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
+        await self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
-        self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
+        await self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
 
     @commands.Cog.listener()
     async def on_error(self, message):

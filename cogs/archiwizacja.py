@@ -11,18 +11,18 @@ class Logs(commands.Cog):
         self.logsChannel = self.bot.get_channel(660770250001874944)
         self.errorChannel = self.bot.get_channel(660813978154303518)
 
-    async def send_log(self, send_channel: discord.TextChannel, msg: discord.Message, desc: str,
+    async def send_log(self, send_channel, msg, desc: str,
                        msg_color: discord.Color):
         """WYSYŁANIE WIADOMOSCI DO LOGOW, DO WSKAZANEGO KANAŁU"""
-        if msg.channel.id != send_channel and msg.author.id != self.bot.user.id:
+        if msg.channel.id != send_channel.id and msg.author.id != self.bot.user.id:
             msg_em = discord.Embed(
-                title=msg.author,
+                title=msg.author.name,
                 description=desc,
                 colour=msg_color
             )
 
             msg_em.set_footer(
-                text=f'{msg.channel}, ID: {msg.author.id}'
+                text=f'{msg.channel.name}, ID: {msg.author.id}'
             )
 
             await send_channel.send(embed=msg_em)
@@ -33,11 +33,11 @@ class Logs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
-        await self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.green())
+        await self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.red())
 
-    @commands.Cog.listener()
-    async def on_error(self, message):
-        await self.send_log(self.errorChannel, message, message.content, discord.Color.dark_red())
+    # @commands.Cog.listener()
+    # async def on_error(self, message):
+    #     await self.send_log(self.errorChannel, message, message.content, discord.Color.dark_red())
 
 
 def setup(bot):

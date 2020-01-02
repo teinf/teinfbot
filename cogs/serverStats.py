@@ -21,6 +21,7 @@ class ServerStats(commands.Cog):
                 trees_amount = int(match["data-count"])
                 return "{0:,}".format(trees_amount)
 
+
     @commands.Cog.listener()
     async def on_ready(self):
         self.treeChannel: discord.TextChannel = self.bot.get_channel(660427011642359811)

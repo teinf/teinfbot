@@ -1,9 +1,14 @@
+import io
+
+import aiohttp
 import discord
 import asyncio
 import random
 import json
+
+from bs4 import BeautifulSoup
 from discord.ext import commands
-from discord import File
+from gtts import gTTS
 
 
 class Zabawa(commands.Cog):
@@ -72,8 +77,8 @@ class Zabawa(commands.Cog):
     async def lokieto(self, ctx, *reason):
         to_slap = random.choice(ctx.guild.members)
         slapDescription = '{0.author} walnął z łokieta {1} bo *{2}*'.format(ctx, to_slap, " ".join(reason))
-        em = discord.Embed(title = "ŁOKIETO", description= slapDescription, colour= discord.Colour.gold())
-        await ctx.send(embed = em)
+        em = discord.Embed(title="ŁOKIETO", description=slapDescription, colour=discord.Colour.gold())
+        await ctx.send(embed=em)
 
     @commands.command(aliases=["losowy_cytat", "cytacik", "cytat"])
     async def cytaty(self, ctx):
@@ -106,25 +111,37 @@ class Zabawa(commands.Cog):
         await ctx.message.delete()
         await ctx.send("**` POMYŚLNIE DODANO CYTAT `**", delete_after=10)
 
-    @commands.command(aliases=["penis", "chuj"])
-    @commands.cooldown(1, 30, commands.BucketType.user)
+    @staticmethod
+    def get_kutas_embed(title_: str, desc: str, kolor):
+        return discord.Embed(
+            title=title_,
+            colour=kolor,
+            description=desc
+        )
+
+    @commands.command(name="kutas")
     async def kutas(self, ctx):
-        losowa = random.choice(range(1, 30))
-        if losowa < 10:
-            kolor = discord.Colour.gold()
-            znak = "tylko"
-        elif 10 <= losowa < 20:
-            kolor = discord.Colour.from_rgb(255, 255, 255)
-            znak = ""
-        elif 20 <= losowa <= 30:
-            kolor = discord.Colour.from_rgb(0, 0, 0)
-            znak = "aż"
+        kutas_len = random.randint(1, 30)
+        if kutas_len < 10:
+            em = self.get_kutas_embed(
+                title_="YELLO DIK",
+                desc=f"{ctx.author.name} twój mały ma {kutas_len} cm! Współczuję Ci :(",
+                kolor=discord.Color.gold()
+            )
+        elif 10 <= kutas_len < 20:
+            em = self.get_kutas_embed(
+                title_="WHITE DIK",
+                desc=f"{ctx.author.name} twój normalny ma {kutas_len} cm! Nadal za mały ale ok",
+                kolor=discord.Color.from_rgb(255, 255, 255)
+            )
+        else:
+            em = self.get_kutas_embed(
+                title_="YELLO DIK",
+                desc=f"{ctx.author.name} twój BBC ma {kutas_len} cm! Witamy in WAKANDA",
+                kolor=discord.Color.from_rgb(0, 0, 0)
+            )
 
-        await ctx.send("Przykłada chuja do linijki...")
-
-        em = discord.Embed(title="\U0001F51E Kutas \U0001F51E",
-                           description=f'{ctx.message.author} Twój kutas ma {znak} **{losowa}** cm', colour=kolor)
-        await ctx.send(embed=em, delete_after=20)
+        await ctx.send(embed=em)
         await ctx.message.delete()
 
     @commands.command(aliases=["rasy"])
@@ -140,20 +157,73 @@ class Zabawa(commands.Cog):
 
     @commands.command()
     async def nyzio(self, ctx):
-        alphabet = "A B C D E F G H I J K L M N O P R S T U V W X Y Z"
-        alphabetLs = alphabet.split(" ")
-        randomLetter = random.choice(alphabetLs)
-        await ctx.send(randomLetter + "yzio")
+        alphabet = "ABCDEFGHIJKLMNOPRSTUVWXYZ"
+        random_letter = random.choice(alphabet)
+        await ctx.send(random_letter + "yzio")
 
-    # @commands.command()
-    # async def powiedz(self, ctx, jezyk, *what):
-    #     await ctx.message.delete()
-    #     what = " ".join(what)
-    #     from discord import File
-    #     tts = gTTS(what, lang=jezyk)
-    #     with open(r"P:\Projekty\Discord Bots\TEINF BOT\cogs\musics\music.mp3", 'wb') as f:
-    #         tts.write_to_fp(f)
-    #     await ctx.send(file=File(r"P:\Projekty\Discord Bots\TEINF BOT\cogs\musics\music.mp3"))
+    @commands.command()
+    async def powiedz(self, ctx, jezyk, *what):
+        await ctx.message.delete()
+        what = " ".join(what)
+        tts = gTTS(what, lang=jezyk)
+        file_path = "cogs/musics/music.mp3"
+        with open(file_path, 'wb') as f:
+            tts.write_to_fp(f)
+        await ctx.send(file=discord.File(file_path))
+
+    @staticmethod
+    async def get_suchar() -> str:
+        my_url = 'http://piszsuchary.pl/losuj'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(my_url) as resp:
+                data = io.BytesIO(await resp.read())
+                soup = BeautifulSoup(data, "html.parser")
+
+            match = soup.find("pre", class_="tekst-pokaz")
+
+            return match.text[:-17]
+
+    @staticmethod
+    async def get_meme(fullPage=False):
+        """ ZWRACA (url, tytul)"""
+        my_url = 'https://jbzd.com.pl/str/'
+        my_url += str(random.randint(1, 150))
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(my_url) as resp:
+                data = io.BytesIO(await resp.read())
+                soup = BeautifulSoup(data, "html.parser")
+
+                images = soup.find_all("img", class_="article-image")
+                images_url = [(image['src'], image['alt']) for image in images]
+
+        if not fullPage:
+            return random.choice(images_url)
+        else:
+            return images_url
+
+    @staticmethod
+    async def get_meme_embed(meme) -> discord.Embed:
+        em = discord.Embed(
+            title=meme[1],
+        )
+
+        em.set_image(url=meme[0])
+
+        return em
+
+    @commands.command()
+    async def mem(self, ctx):
+        await ctx.channel.send(embed=await self.get_meme_embed(await self.get_meme()))
+
+    @commands.command()
+    async def strona_memow(self, ctx):
+        for meme in await self.get_meme(fullPage=True):
+            await ctx.channel.send(embed=await self.get_meme_embed(meme))
+
+    @commands.command()
+    async def suchar(self, ctx):
+        await ctx.channel.send(await self.get_suchar())
 
 
 def setup(bot):

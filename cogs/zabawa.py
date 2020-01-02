@@ -2,6 +2,7 @@ import discord
 import random
 from discord.ext import commands
 from gtts import gTTS
+import gtts
 
 
 class Zabawa(commands.Cog):
@@ -47,7 +48,8 @@ class Zabawa(commands.Cog):
         await ctx.send(random_letter + "yzio")
 
     @commands.command()
-    async def powiedz(self, ctx, jezyk, *what):
+    async def say(self, ctx, jezyk, *what):
+        """ Użycie: .say en Hello There """
         await ctx.message.delete()
         what = " ".join(what)
         tts = gTTS(what, lang=jezyk)
@@ -55,6 +57,11 @@ class Zabawa(commands.Cog):
         with open(file_path, 'wb') as f:
             tts.write_to_fp(f)
         await ctx.send(file=discord.File(file_path))
+
+    @commands.command()
+    async def languages(self, ctx):
+        em = discord.Embed.from_dict(gtts.lang.tts_langs(tlf="com"))
+        await ctx.send(embed=em)
 
 
 def setup(bot):

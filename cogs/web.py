@@ -4,7 +4,7 @@ import discord
 import asyncio
 import random
 from bs4 import BeautifulSoup
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 
 class Web(commands.Cog):

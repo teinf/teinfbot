@@ -35,10 +35,6 @@ class Logs(commands.Cog):
     async def on_message_delete(self, message):
         await self.send_log(self.logsChannel, message, f"Wiadomość: {message.content}", discord.Color.red())
 
-    # @commands.Cog.listener()
-    # async def on_error(self, message):
-    #     await self.send_log(self.errorChannel, message, message.content, discord.Color.dark_red())
-
 
 def setup(bot):
     bot.add_cog(Logs(bot))

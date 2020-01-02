@@ -8,7 +8,7 @@ class Interaktywne(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, name="lt")
+    @commands.command(name="lt")
     @commands.cooldown(1, 60, commands.BucketType.default)
     async def losowanie_teamu(self, ctx, num_of_teams: int = 2):
         """LOSUJE TEAM !"""

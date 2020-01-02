@@ -60,7 +60,7 @@ class Zabawa(commands.Cog):
 
     @commands.command()
     async def languages(self, ctx):
-        em = discord.Embed.from_dict(gtts.lang.tts_langs(tlf="com"))
+        em = discord.Embed.from_dict(gtts.lang.tts_langs(tld="com"))
         await ctx.send(embed=em)
 
 

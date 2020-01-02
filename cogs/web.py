@@ -92,3 +92,7 @@ class Web(commands.Cog):
     @commands.command()
     async def suchar(self, ctx):
         await ctx.channel.send(await self.get_suchar())
+
+
+def setup(bot):
+    bot.add_cog(Web(bot))

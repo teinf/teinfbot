@@ -14,12 +14,6 @@ async def on_ready():
     # await bot.change_presence(status=discord.Status.online, activity=discord.Game(name="Aktywny!"))
 
 
-@bot.event
-async def on_message(message):
-    # sprawdzanie czy wiadomosc jest komendą
-    await bot.process_commands(message)
-
-
 # ładowanie rozszerzeń
 def get_extensions(ext_dir, name: str):
     ext_folder = name  # folder w którym są rozszerzenia
@@ -28,7 +22,7 @@ def get_extensions(ext_dir, name: str):
 
     for ext in ext_elems:
         if ext[-3:] == ".py":
-            yield name+"."+ext[:-3]
+            yield name + "." + ext[:-3]
 
 
 if __name__ == '__main__':

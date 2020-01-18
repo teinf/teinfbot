@@ -15,6 +15,7 @@ class Web(commands.Cog):
     async def on_ready(self):
         self.tree_channel: discord.TextChannel = self.bot.get_channel(660427011642359811)
         self.refresh_stats.start()
+        self.memes_channel = self.bot.get_channel(668128841134374924)
 
     @staticmethod
     async def get_trees() -> str:
@@ -76,21 +77,40 @@ class Web(commands.Cog):
 
         return em
 
+    async def is_meme_channel(self, chan) -> bool:
+        if chan != self.memes_channel:
+            await chan.send(embed=discord.Embed(
+                title="Nie ten kanał...",
+                description=f"Jeśli chcesz zobaczyć memy zobacz {self.memes_channel.name}",
+                color=discord.Color.purple()
+            ), delete_after=5)
+
+            return False
+        return True
+
     @commands.command()
     async def mem(self, ctx):
+        if not self.is_meme_channel(ctx.channel):
+            return
         await ctx.channel.send(embed=await self.get_meme_embed(await self.get_meme()))
 
     @commands.command()
     async def strona_memow(self, ctx):
+        if not self.is_meme_channel(ctx.channel):
+            return
         for meme in await self.get_meme(full_page=True):
             await ctx.channel.send(embed=await self.get_meme_embed(meme))
 
     @commands.command()
     async def nowy_mem(self, ctx):
+        if not self.is_meme_channel(ctx.channel):
+            return
         await ctx.channel.send(embed=await self.get_meme_embed(await self.get_meme(first_page=True)))
 
     @commands.command()
     async def suchar(self, ctx):
+        if not self.is_meme_channel(ctx.channel):
+            return
         await ctx.channel.send(await self.get_suchar())
 
 

@@ -77,39 +77,41 @@ class Web(commands.Cog):
 
         return em
 
-    async def is_meme_channel(self, chan) -> bool:
-        if chan != self.memes_channel:
-            await chan.send(embed=discord.Embed(
-                title="Nie ten kanał...",
-                description=f"Jeśli chcesz zobaczyć memy zobacz {self.memes_channel.name}",
+    async def is_meme_channel(self, ctx) -> bool:
+        if ctx.channel.id != self.memes_channel.id:
+            await ctx.channel.send(embed=discord.Embed(
+                title=f"{ctx.author}, nie ten kanał...",
+                description=f"Jeśli chcesz zobaczyć memy zobacz #{self.memes_channel.name}",
                 color=discord.Color.purple()
-            ), delete_after=5)
+            ), delete_after=10)
 
+            await ctx.message.delete()
             return False
-        return True
+        else:
+            return True
 
     @commands.command()
     async def mem(self, ctx):
-        if not self.is_meme_channel(ctx.channel):
+        if not await self.is_meme_channel(ctx):
             return
         await ctx.channel.send(embed=await self.get_meme_embed(await self.get_meme()))
 
     @commands.command()
     async def strona_memow(self, ctx):
-        if not self.is_meme_channel(ctx.channel):
+        if not await self.is_meme_channel(ctx):
             return
         for meme in await self.get_meme(full_page=True):
             await ctx.channel.send(embed=await self.get_meme_embed(meme))
 
     @commands.command()
     async def nowy_mem(self, ctx):
-        if not self.is_meme_channel(ctx.channel):
+        if not await self.is_meme_channel(ctx):
             return
         await ctx.channel.send(embed=await self.get_meme_embed(await self.get_meme(first_page=True)))
 
     @commands.command()
     async def suchar(self, ctx):
-        if not self.is_meme_channel(ctx.channel):
+        if not await self.is_meme_channel(ctx):
             return
         await ctx.channel.send(await self.get_suchar())
 

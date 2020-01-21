@@ -30,7 +30,7 @@ class Russian(commands.Cog):
             # Gdy nie zdąży dodać reakcji - 30 sekund
             await ctx.send(embed=discord.Embed(
                 title="⏰ Upływ czasu ⏰",
-                description=f"{player.member.mention} nie zdążył strzelić!\nZa kare dostał kulkę od barmana",
+                description=f"{player.mention} nie zdążył strzelić!\nZa kare dostał kulkę od barmana",
                 color=discord.Color.red()
             ))
             return -1
@@ -83,7 +83,7 @@ class Russian(commands.Cog):
 
                 embed = discord.Embed(
                     title="🤔 Wybór 🤔",
-                    description=f"{player.member.mention} 1. Strzał w siebie\n2. Strzał w innego",
+                    description=f"{player.member.mention}\n1. Strzał w siebie\n2. Strzał w innego",
                     color=discord.Color.purple()
                 )
                 msg = await ctx.send(embed=embed)
@@ -109,6 +109,7 @@ class Russian(commands.Cog):
 
                         await utils.add_digits(message, len(players))
                         response = await self.handle_reactions(ctx, message, player.member)
+                        print(players[response - 1], players)
                         await player.shot(ctx, players[response - 1], revolver)
 
                 elif kill_decision == 2:
@@ -132,10 +133,16 @@ class Russian(commands.Cog):
 
                         await player.shot(ctx, player, revolver)
 
-                for dp in dead_players:
-                    players.remove(dp)
+                for pl in players:
+                    if pl.is_dead:
+                        dead_players.append(pl)
+                        players.remove(pl)
 
-        print("KONIEC")
+        await ctx.send(embed=discord.Embed(
+            title="🏆 Wygrana! 🏆",
+            description=f"Gratulacje {players[0]} wygrałeś rozgrywkę!",
+            color=discord.Color.green()
+        ))
 
 
 class Gun:
@@ -180,29 +187,53 @@ class Player:
         self.member = member
         self.is_dead = False
 
-    async def shot(self, ctx: commands.Context, other, gun: Gun):
+    def __repr__(self):
+        return str(self.member)
+
+    async def shot(self, ctx: commands.Context, other, gun: Gun, self_shot: bool = False):
         try:
             bullet_inside = next(gun)
         except StopIteration:
             gun.spin()
             bullet_inside = next(gun)
 
-        if bullet_inside:
+        if bullet_inside and not self_shot:
             other.is_dead = True
 
-            await ctx.send(embed=discord.Embed(
+            embed = discord.Embed(
                 title="☠ ŚMIERĆ ☠",
                 description=f"Niestety umarł {str(other.member)}\nZostał zabity przez {str(self.member)}",
                 color=discord.Color.red()
-            ))
+            )
+
+            embed.set_author(name=self.member.display_name, icon_url=self.member.avatar_url)
+
+            await ctx.send(embed=embed)
 
             gun.spin()
-        else:
-            await ctx.send(embed=discord.Embed(
+        elif bullet_inside and self_shot:
+            other.is_dead = True
+
+            embed = discord.Embed(
+                title="☠ ŚMIERĆ ☠",
+                description=f"Niestety umarł {str(other.member)}\nPopełnił on samobójstwo",
+                color=discord.Color.red()
+            )
+
+            embed.set_author(name=self.member.display_name, icon_url=self.member.avatar_url)
+
+            await ctx.send(embed=embed)
+
+        elif not bullet_inside:
+
+            embed = discord.Embed(
                 title="💕 PRZEŻYŁ 💕",
                 description=f"{str(other.member)} Przeżył\nStrzał {str(self.member)} nie miał kuli!",
                 color=discord.Color.green()
-            ))
+            )
+            embed.set_author(name=self.member.display_name, icon_url=self.member.avatar_url)
+
+            await ctx.send(embed=embed)
 
         return bullet_inside
 

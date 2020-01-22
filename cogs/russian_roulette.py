@@ -6,6 +6,7 @@ import random
 import utils
 import waluta as money
 
+
 class Russian(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -74,7 +75,7 @@ class Russian(commands.Cog):
 
         start_players_amount = len(players)
 
-        revolver = Gun()
+        revolver = Gun(ctx)
         dead_players = []
 
         while len(players) > 1:
@@ -88,7 +89,10 @@ class Russian(commands.Cog):
                     description=f"{player.member.mention}\n1. Strzał w siebie\n2. Strzał w innego",
                     color=discord.Color.purple()
                 )
-                msg = await ctx.send(embed=embed)
+
+                embed.set_footer(text=f"{str(player.member)}", icon_url=player.member.avatar_url)
+
+                msg = await ctx.send(embed=embed, delete_after=20)
                 await utils.add_digits(msg, 2)
 
                 kill_decision = await self.handle_reactions(ctx, msg, player.member)
@@ -112,6 +116,7 @@ class Russian(commands.Cog):
 
                     await utils.add_digits(message, len(players))
                     response = await self.handle_reactions(ctx, message, player.member)
+
                     target_killed = await player.shot(ctx, players[response - 1], revolver)
 
                     if not target_killed:
@@ -130,19 +135,21 @@ class Russian(commands.Cog):
 
         await ctx.send(embed=discord.Embed(
             title="🏆 Wygrana! 🏆",
-            description=f"Gratulacje {players[0]} wygrałeś rozgrywkę!\nWygrywasz {start_players_amount*5} chillcoinsów",
+            description=f"Gratulacje {players[0]} wygrałeś rozgrywkę!\nWygrywasz {start_players_amount * 5} chillcoinsów",
             color=discord.Color.green()
         ))
 
         # money.Waluta.update_money(players[0].member.id, start_players_amount*5)
 
 
+
 class Gun:
-    def __init__(self, ammo_count: int = 6, bullets_count: int = 1):
+    def __init__(self, ctx: commands.Context, ammo_count: int = 6, bullets_count: int = 1):
         self.ammo_count = ammo_count
         self.bullets_count = bullets_count
         self.ammo = self.create_ammo()
         self.index = 0
+        self.ctx = ctx
 
     def create_ammo(self) -> List[bool]:
         ammo = []
@@ -158,9 +165,15 @@ class Gun:
     def current_ammo(self):
         return self.ammo[self.index]
 
-    def spin(self):
+    async def spin(self):
         self.ammo = self.create_ammo()
         self.index = 0
+
+        await self.ctx.send(embed=discord.Embed(
+            title="Przeładowanie",
+            description="Umieszczenie naboju do jednej z komór...",
+            color=discord.Color.orange()
+        ))
 
     def __iter__(self):
         return self
@@ -186,7 +199,7 @@ class Player:
         try:
             bullet_inside = next(gun)
         except StopIteration:
-            gun.spin()
+            await gun.spin()
             bullet_inside = next(gun)
 
         if bullet_inside and not self_shot:
@@ -198,11 +211,11 @@ class Player:
                 color=discord.Color.red()
             )
 
-            embed.set_author(name=self.member.display_name, icon_url=self.member.avatar_url)
+            embed.set_footer(text=self.member.display_name, icon_url=self.member.avatar_url)
 
             await ctx.send(embed=embed)
 
-            gun.spin()
+            await gun.spin()
         elif bullet_inside and self_shot:
             other.is_dead = True
 
@@ -212,7 +225,7 @@ class Player:
                 color=discord.Color.red()
             )
 
-            embed.set_author(name=self.member.display_name, icon_url=self.member.avatar_url)
+            embed.set_footer(text=self.member.display_name, icon_url=self.member.avatar_url)
 
             await ctx.send(embed=embed)
 
@@ -223,9 +236,9 @@ class Player:
                 description=f"{str(other.member)} Przeżył\nStrzał {str(self.member)} nie miał kuli!",
                 color=discord.Color.green()
             )
-            embed.set_author(name=self.member.display_name, icon_url=self.member.avatar_url)
+            embed.set_footer(text=self.member.display_name, icon_url=self.member.avatar_url)
 
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, delete_after=10)
 
         return bullet_inside
 

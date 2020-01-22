@@ -4,7 +4,7 @@ import asyncio
 from typing import List, Tuple
 import random
 import utils
-
+import waluta as money
 
 class Russian(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -72,6 +72,8 @@ class Russian(commands.Cog):
 
         random.shuffle(players)
 
+        start_players_amount = len(players)
+
         revolver = Gun()
         dead_players = []
 
@@ -98,19 +100,7 @@ class Russian(commands.Cog):
 
                 elif kill_decision == 1:
                     # strzelanie w siebie
-                    target_killed = await player.shot(ctx, player, revolver)
-                    if not target_killed:
-                        message = await ctx.send(embed=discord.Embed(
-                            title="Udało Ci się przeżyć!",
-                            description=f"{player.member.mention} jako nagrodę wybierz osobę w którą chcesz strzelić" + self.players_description(
-                                players),
-                            color=discord.Color.green()
-                        ))
-
-                        await utils.add_digits(message, len(players))
-                        response = await self.handle_reactions(ctx, message, player.member)
-                        print(players[response - 1], players)
-                        await player.shot(ctx, players[response - 1], revolver)
+                    await player.shot(ctx, player, revolver, self_shot=True)
 
                 elif kill_decision == 2:
                     message = await ctx.send(embed=discord.Embed(
@@ -140,9 +130,11 @@ class Russian(commands.Cog):
 
         await ctx.send(embed=discord.Embed(
             title="🏆 Wygrana! 🏆",
-            description=f"Gratulacje {players[0]} wygrałeś rozgrywkę!",
+            description=f"Gratulacje {players[0]} wygrałeś rozgrywkę!\nWygrywasz {start_players_amount*5} chillcoinsów",
             color=discord.Color.green()
         ))
+
+        # money.Waluta.update_money(players[0].member.id, start_players_amount*5)
 
 
 class Gun:

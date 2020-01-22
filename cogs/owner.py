@@ -1,4 +1,6 @@
 from discord.ext import commands
+import discord
+from typing import List
 
 
 class Owner(commands.Cog):

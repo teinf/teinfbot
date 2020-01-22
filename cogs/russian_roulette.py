@@ -4,7 +4,7 @@ import asyncio
 from typing import List, Tuple
 import random
 import utils
-import waluta as money
+from waluta import Baza
 
 
 class Russian(commands.Cog):
@@ -37,15 +37,18 @@ class Russian(commands.Cog):
             return -1
 
     @commands.command(name="rr")
-    async def rr(self, ctx: commands.Context):
+    async def rr(self, ctx: commands.Context, stawka: int):
+        if stawka <= 0:
+            return
+
         start_embed = discord.Embed(
             title="Rosyjska ruletka",
-            description="Czy podejmiesz się wyzwaniu? Kliknij 🔫 aby dołączyć\n🏁 aby wystartować",
+            description=f"Czy podejmiesz się wyzwaniu?\nKliknij 🔫 aby dołączyć\n🏁 aby wystartować\nKoszt wstępu: `{stawka}` chillcoinsów",
             color=discord.Color.red()
         )
 
         start_embed.set_image(url=self.bot.user.avatar_url)
-        start_embed.set_author(name=f"Komenda wyłołana przez {ctx.author.name}", icon_url=ctx.author.avatar_url)
+        start_embed.set_footer(text=f"Komenda wyłołana przez {ctx.author.name}", icon_url=ctx.author.avatar_url)
 
         start_message: discord.Message = await ctx.send(embed=start_embed)
         await start_message.add_reaction("🔫")
@@ -71,19 +74,27 @@ class Russian(commands.Cog):
         players: List[Player] = [Player(player) for player in await start_message.reactions[0].users().flatten() if
                                  player.display_name != self.bot.user.display_name]
 
+        if len(players) <= 1:
+            return
+
+        for player in players:
+            money = Baza.get_money(player.id)
+            if money < stawka:
+                players.remove(player)
+                await player.member.send(
+                    "Niestety nie możesz zagrać w rosyjską ruletkę - masz za mało pieniędzy! - {}".format(money))
+            else:
+                Baza.add_money(player.id, -stawka)
+        print(players)
+        if len(players) <= 1:
+            return
+
         random.shuffle(players)
 
         start_players_amount = len(players)
-
         revolver = Gun(ctx)
-        dead_players = []
-
         while len(players) > 1:
             for player in players:
-                # Jeżeli martwy to nie ma głosu
-                if player in dead_players:
-                    continue
-
                 embed = discord.Embed(
                     title="🤔 Wybór 🤔",
                     description=f"{player.member.mention}\n1. Strzał w siebie\n2. Strzał w innego",
@@ -98,13 +109,14 @@ class Russian(commands.Cog):
                 kill_decision = await self.handle_reactions(ctx, msg, player.member)
 
                 if kill_decision == -1:
-                    player.is_dead = True
-                    dead_players.append(player)
                     players.remove(player)
 
                 elif kill_decision == 1:
                     # strzelanie w siebie
-                    await player.shot(ctx, player, revolver, self_shot=True)
+                    target = player
+                    target_killed = await player.shot(ctx, target, revolver, self_shot=True)
+                    if target_killed:
+                        players.remove(target)
 
                 elif kill_decision == 2:
                     message = await ctx.send(embed=discord.Embed(
@@ -117,7 +129,8 @@ class Russian(commands.Cog):
                     await utils.add_digits(message, len(players))
                     response = await self.handle_reactions(ctx, message, player.member)
 
-                    target_killed = await player.shot(ctx, players[response - 1], revolver)
+                    target = players[response - 1]
+                    target_killed = await player.shot(ctx, target, revolver)
 
                     if not target_killed:
                         await ctx.send(embed=discord.Embed(
@@ -126,21 +139,28 @@ class Russian(commands.Cog):
                             color=discord.Color.red()
                         ))
 
-                        await player.shot(ctx, player, revolver)
+                        target = player
+                        target_killed = await player.shot(ctx, target, revolver, self_shot=True)
+                        if target_killed:
+                            players.remove(target)
 
-                for pl in players:
-                    if pl.is_dead:
-                        dead_players.append(pl)
-                        players.remove(pl)
+                    else:
+                        players.remove(target)
 
-        await ctx.send(embed=discord.Embed(
+        winning_player = players[0]
+
+        embed = discord.Embed(
             title="🏆 Wygrana! 🏆",
-            description=f"Gratulacje {players[0]} wygrałeś rozgrywkę!\nWygrywasz {start_players_amount * 5} chillcoinsów",
+            description=f"Gratulacje {winning_player} wygrałeś rozgrywkę!",
             color=discord.Color.green()
-        ))
+        )
 
-        # money.Waluta.update_money(players[0].member.id, start_players_amount*5)
-
+        money_gained = start_players_amount * stawka
+        exp_gained = money_gained // 2
+        embed.set_footer(text=f"+{money_gained}cc, +{exp_gained}exp")
+        await ctx.send(embed=embed)
+        Baza.add_money(winning_player.id, money_gained)
+        Baza.add_exp(winning_player.id, exp_gained)
 
 
 class Gun:
@@ -190,7 +210,7 @@ class Gun:
 class Player:
     def __init__(self, member: discord.Member):
         self.member = member
-        self.is_dead = False
+        self.id = self.member.id
 
     def __repr__(self):
         return str(self.member)
@@ -203,8 +223,6 @@ class Player:
             bullet_inside = next(gun)
 
         if bullet_inside and not self_shot:
-            other.is_dead = True
-
             embed = discord.Embed(
                 title="☠ ŚMIERĆ ☠",
                 description=f"Niestety umarł {str(other.member)}\nZostał zabity przez {str(self.member)}",
@@ -214,11 +232,9 @@ class Player:
             embed.set_footer(text=self.member.display_name, icon_url=self.member.avatar_url)
 
             await ctx.send(embed=embed)
-
             await gun.spin()
-        elif bullet_inside and self_shot:
-            other.is_dead = True
 
+        elif bullet_inside and self_shot:
             embed = discord.Embed(
                 title="☠ ŚMIERĆ ☠",
                 description=f"Niestety umarł {str(other.member)}\nPopełnił on samobójstwo",
@@ -228,11 +244,12 @@ class Player:
             embed.set_footer(text=self.member.display_name, icon_url=self.member.avatar_url)
 
             await ctx.send(embed=embed)
+            await gun.spin()
 
         elif not bullet_inside:
 
             embed = discord.Embed(
-                title="💕 PRZEŻYŁ 💕",
+                title="💉 PRZEŻYŁ 💉",
                 description=f"{str(other.member)} Przeżył\nStrzał {str(self.member)} nie miał kuli!",
                 color=discord.Color.green()
             )

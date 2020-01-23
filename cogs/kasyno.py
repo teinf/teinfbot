@@ -59,19 +59,17 @@ class Kasyno(commands.Cog):
             check=lambda react, usr: usr == ctx.author and react.message.id == message.id)
 
         result = circles.index(reaction.emoji) + 1
-        print(result)
 
         winning_number = random.randint(0, 36)
-
         wygrana = 0
 
         if result == 1:
             if winning_number in czarne:
                 wygrana = bet * 2
-        if result == 2:
+        elif result == 2:
             if winning_number in czerwone:
                 wygrana = bet * 2
-        else:
+        elif result == 3:
             if winning_number == 0:
                 wygrana = bet * 35
 

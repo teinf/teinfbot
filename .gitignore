@@ -134,3 +134,7 @@ dmypy.json
 .vscode
 *.pyc
 __pycache__/
+
+*.db
+.db
+

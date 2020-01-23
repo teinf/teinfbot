@@ -1,6 +1,7 @@
 import discord, random
 from discord.ext import commands
 import utils
+from waluta import Baza
 
 
 class Kasyno(commands.Cog):
@@ -25,11 +26,19 @@ class Kasyno(commands.Cog):
 
     @commands.command()
     async def ruletka(self, ctx, bet: int):
-        czarne = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]
-        czerwone = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
 
         if bet <= 0:
             return
+
+        money = Baza.get_money(ctx.author.id)
+        if money < bet:
+            await ctx.author.send(f"Nie masz wystarczająco pieniędzy - brakuje `{abs(bet-money)}` chillcoinów")
+            return
+
+        Baza.add_money(ctx.author.id, -bet)
+
+        czarne = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]
+        czerwone = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
 
         embed = discord.Embed(
             title=f"🎰 Ruletka 🎰",
@@ -86,13 +95,15 @@ class Kasyno(commands.Cog):
         em.add_field(name=f"**INFO O LICZBIE**", value=desc)
         if wygrana > 0:
             em.add_field(name="**Profit** :", value=f"**+{wygrana}** chillcoinsów", inline=False)
+            Baza.add_money(ctx.author.id, wygrana)
+            Baza.add_exp(ctx.author.id, wygrana//10)
         em.set_footer(text=str(ctx.author) + f": +{wygrana}CC, +{wygrana // 10}EXP", icon_url=ctx.author.avatar_url)
 
         await ctx.send(embed=em)
 
     @ruletka.error
     async def ruletka_error(self, ctx, error):
-        print(error)
+        print("RULETKA: ",error)
 
 def setup(bot):
     bot.add_cog(Kasyno(bot))

@@ -58,10 +58,6 @@ class Zabawa(commands.Cog):
             tts.write_to_fp(f)
         await ctx.send(file=discord.File(file_path))
 
-    @commands.command()
-    async def languages(self, ctx):
-        await ctx.send(title="Jezyki", description=gtts.lang.tts_langs(tld="com"))
-
 
 def setup(bot):
     bot.add_cog(Zabawa(bot))

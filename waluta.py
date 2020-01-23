@@ -94,6 +94,7 @@ class Baza:
         all_users.sort(key=lambda x: x[cls.kolumny["money"]])
         return all_users
 
+
 # if __name__ == "__main__":
 #     bot = discord.Client()
 #
@@ -110,7 +111,7 @@ class Baza:
 #
 #         with connection:
 #             for member in x:
-#                 cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (member.id, 50, 0, 1))
+#                 cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (member.id, 300, 0, 1))
 #
 #
 #     bot.run(os.environ["ACCESS_TOKEN"])

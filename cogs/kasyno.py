@@ -32,7 +32,7 @@ class Kasyno(commands.Cog):
 
         money = Baza.get_money(ctx.author.id)
         if money < bet:
-            await ctx.author.send(f"Nie masz wystarczająco pieniędzy - brakuje `{abs(bet-money)}` chillcoinów")
+            await ctx.author.send(f"Nie masz wystarczająco pieniędzy - brakuje `{abs(bet - money)}` chillcoinów")
             return
 
         Baza.add_money(ctx.author.id, -bet)
@@ -94,14 +94,80 @@ class Kasyno(commands.Cog):
         if wygrana > 0:
             em.add_field(name="**Profit** :", value=f"**+{wygrana}** chillcoinsów", inline=False)
             Baza.add_money(ctx.author.id, wygrana)
-            Baza.add_exp(ctx.author.id, wygrana//10)
+            Baza.add_exp(ctx.author.id, wygrana // 10)
         em.set_footer(text=str(ctx.author) + f": +{wygrana}CC, +{wygrana // 10}EXP", icon_url=ctx.author.avatar_url)
 
         await ctx.send(embed=em)
 
     @ruletka.error
     async def ruletka_error(self, ctx, error):
-        print("RULETKA: ",error)
+        print("RULETKA: ", error)
+
+    @commands.cooldown(3, 60, commands.BucketType.user)
+    @commands.command()
+    async def zdrapka(self, ctx):
+        """ KOSZT ZDRAPKI 5 chillcoinów """
+
+        money = Baza.get_money(ctx.author.id)
+        if money < 5:
+            return
+        else:
+            Baza.add_money(ctx.author.id, -5)
+
+        wygrane = {
+            0: 57,
+            5: 25,
+            10: 10,
+            20: 5,
+            100: 2,
+            500: 1,
+        }
+
+        wygrana = random.choices(list(wygrane.keys()), weights=list(wygrane.values()))
+        wygrana = wygrana[0]
+
+        if wygrana == 0:
+            embed = discord.Embed(title="ZDRAPKA", description="Nic nie wygrałeś!", color=discord.Color.red())
+        else:
+            embed = discord.Embed(title="ZDRAPKA", description=f"Wygrałeś {wygrana} chillcoinów!",
+                                  color=discord.Color.green())
+
+        embed.set_footer(text=str(ctx.author), icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=embed)
+        Baza.add_money(ctx.author.id, wygrana)
+
+    @zdrapka.error
+    async def zdrapka_error(self, ctx, error):
+        await ctx.author.send(error)
+
+    # @commands.is_owner()
+    # @commands.command()
+    # async def splitsteal(self, ctx, amount: int, member1: discord.Member, member2: discord.Member):
+    #     sos_embed = discord.Embed(title="Split or Steal?", description="1. Split\n2. Steal",
+    #                               color=discord.Color.magenta())
+    #
+    #     message1 = await member1.send(embed=sos_embed)
+    #     await utils.add_digits(message1, 2)
+    #
+    #     reaction, user = await self.bot.wait_for("reaction_add", check=lambda react,usr: react.message.id == message1.id and usr == member1)
+    #     choice1 = utils.get_emoji_value(reaction.emoji)
+    #
+    #     message2 = await member2.send(embed=sos_embed)
+    #     await utils.add_digits(message2, 2)
+    #     reaction, user = await self.bot.wait_for("reaction_add", check=lambda react,usr: react.message.id == message2.id and usr == member2)
+    #     choice2 = utils.get_emoji_value(reaction.emoji)
+    #
+    #     if choice1 == choice2:
+    #         if choice1 == 1:
+    #             await ctx.send(f"Obaj wybraliście SPLIT! Kwota: {amount//2}")
+    #         if choice1 == 2:
+    #             await ctx.send(f"Obaj wybraliście STEAL! Nic nie wygraliście ;)")
+    #     else:
+    #         if choice1 == 2:
+    #             await ctx.send(f"{str(member1)} ukradłeś wszystko! wygrywasz {amount}")
+    #         if choice2 == 2:
+    #             await ctx.send(f"{str(member2)} ukradłeś wszystko! wygrywasz {amount}")
+
 
 def setup(bot):
     bot.add_cog(Kasyno(bot))

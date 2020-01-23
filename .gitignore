@@ -137,4 +137,5 @@ __pycache__/
 
 *.db
 .db
-
+discord_users.db
+discord_users

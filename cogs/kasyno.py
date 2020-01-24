@@ -35,7 +35,7 @@ class Kasyno(commands.Cog):
             await ctx.author.send(f"Nie masz wystarczająco pieniędzy - brakuje `{abs(bet - money)}` chillcoinów")
             return
 
-        Baza.add_money(ctx.author.id, -bet)
+        after_bet_balance = Baza.add_money(ctx.author.id, -bet)
 
         czarne = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]
         czerwone = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
@@ -91,11 +91,15 @@ class Kasyno(commands.Cog):
         em = discord.Embed(title=f"\U0001F4B0 Ruletka: {ctx.message.author} \U0001F4B0", colour=kolor)
         em.add_field(name=f"**{text}**", value=f"Wygrywająca liczba : **{winning_number}**", inline=False)
         em.add_field(name=f"**INFO O LICZBIE**", value=desc)
+
         if wygrana > 0:
             em.add_field(name="**Profit** :", value=f"**+{wygrana}** chillcoinsów", inline=False)
-            Baza.add_money(ctx.author.id, wygrana)
+            new_balance = Baza.add_money(ctx.author.id, wygrana)
             Baza.add_exp(ctx.author.id, wygrana // 10)
-        em.set_footer(text=str(ctx.author) + f": +{wygrana}CC, +{wygrana // 10}EXP", icon_url=ctx.author.avatar_url)
+            em.set_footer(text=str(ctx.author) + f": +{wygrana}CC, +{wygrana // 10}EXP, BILANS {new_balance}",
+                          icon_url=ctx.author.avatar_url)
+        else:
+            em.set_footer(text=str(ctx.author) + f":BILANS {after_bet_balance}", icon_url=ctx.author.avatar_url)
 
         await ctx.send(embed=em)
 
@@ -127,18 +131,52 @@ class Kasyno(commands.Cog):
         wygrana = wygrana[0]
 
         if wygrana == 0:
-            embed = discord.Embed(title="ZDRAPKA", description="Nic nie wygrałeś!", color=discord.Color.red())
+            embed = discord.Embed(title="ZDRAPKA", description=f"{ctx.author} nic nie wygrałeś!",
+                                  color=discord.Color.red())
         else:
-            embed = discord.Embed(title="ZDRAPKA", description=f"Wygrałeś {wygrana} chillcoinów!",
+            embed = discord.Embed(title="ZDRAPKA", description=f"{ctx.author} wygrałeś {wygrana} chillcoinów!",
                                   color=discord.Color.green())
 
-        embed.set_footer(text=str(ctx.author), icon_url=ctx.author.avatar_url)
+        new_balance = Baza.add_money(ctx.author.id, wygrana)
+        embed.set_footer(text=f"Nowy bilans: {new_balance}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
-        Baza.add_money(ctx.author.id, wygrana)
 
     @zdrapka.error
     async def zdrapka_error(self, ctx, error):
         await ctx.author.send(error)
+
+    @commands.cooldown(1, 86400, commands.BucketType.user)
+    @commands.command()
+    async def daily_zdrapka(self, ctx):
+        wygrane = {
+            0: 57,
+            5: 25,
+            10: 10,
+            20: 5,
+            100: 2,
+            500: 1,
+        }
+
+        wygrana = random.choices(list(wygrane.keys()), weights=list(wygrane.values()))
+        wygrana = wygrana[0]
+
+        new_balance = Baza.add_money(ctx.author.id, wygrana)
+
+        if wygrana == 0:
+            embed = discord.Embed(
+                title="DAILY ZDRAPKA",
+                description=f"{ctx.author} nic nie wygrałeś!",
+                color=discord.Color.red()
+            )
+        else:
+            embed = discord.Embed(
+                title="DAILY ZDRAPKA",
+                description=f"{ctx.author} wygrałeś {wygrana} chillcoinów!",
+                color=discord.Color.green()
+            )
+
+        embed.set_footer(text=f"Nowy bilans: {new_balance}", icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=embed)
 
     # @commands.is_owner()
     # @commands.command()

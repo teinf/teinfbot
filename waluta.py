@@ -63,6 +63,7 @@ class Baza:
             money = cls.get_money(member_id)
             money += amount
             cls.set_money(member_id, money)
+        return money
 
     @classmethod
     def add_exp(cls, member_id: int, amount: int):

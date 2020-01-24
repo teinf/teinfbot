@@ -139,6 +139,7 @@ class Kasyno(commands.Cog):
 
         new_balance = Baza.add_money(ctx.author.id, wygrana)
         embed.set_footer(text=f"Nowy bilans: {new_balance}", icon_url=ctx.author.avatar_url)
+        Baza.add_exp(ctx.author.id, wygrana // 5)
         await ctx.send(embed=embed)
 
     @zdrapka.error
@@ -177,6 +178,10 @@ class Kasyno(commands.Cog):
 
         embed.set_footer(text=f"Nowy bilans: {new_balance}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
+
+    @daily_zdrapka.error
+    async def daily_zdrapka_error(self, ctx, error):
+        await ctx.author.send(error)
 
     # @commands.is_owner()
     # @commands.command()

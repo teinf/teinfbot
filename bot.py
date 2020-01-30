@@ -1,37 +1,154 @@
 import os
 import discord
+import psycopg2
 from discord.ext import commands
 
-prefix = "."
-bot = commands.Bot(command_prefix=prefix)
+EXTENSIONS = [
+    "cogs.handle_db",
+    "cogs.kasyno",
+    "cogs.zabawa",
+    "cogs.owner",
+    "cogs.interaktywne",
+    "cogs.russian_roulette"
+]
 
 
-@bot.event
-async def on_ready():
-    print(
-        f'\n\nZalogowano jako : {bot.user} - {bot.user.id}\nWersja: {discord.__version__}\n')
-    # await bot.change_presence(status=discord.Status.online, activity=discord.Game(name="Aktywny!"))
+class TeinfBot(commands.Bot):
+    def __init__(self):
+        super().__init__(
+            command_prefix=".",
+            reconnect=True,
+        )
+        self.db = None
 
+        for extension in EXTENSIONS:
+            try:
+                self.load_extension(extension)
+                print(f"[EXT] Success - {extension}")
+            except commands.ExtensionNotFound:
+                print(f"[EXT] Failed - {extension}")
 
-# ładowanie rozszerzeń
-def get_extensions(ext_dir, name: str):
-    ext_folder = name  # folder w którym są rozszerzenia
-    ext_path = os.path.join(ext_dir, ext_folder)
-    ext_elems = os.listdir(ext_path)
-
-    for ext in ext_elems:
-        if ext[-3:] == ".py":
-            yield name + "." + ext[:-3]
-
-
-if __name__ == '__main__':
-    for extension in get_extensions(os.getcwd(), 'cogs'):
+    def run(self):
         try:
-            bot.load_extension(extension)
-        except Exception as error:
-            print(f'{extension} COULD NOT BE LOADED. [{error}]')
-        else:
-            print("LOADED " + extension)
+            self.loop.run_until_complete(self.bot_start())
+        except KeyboardInterrupt:
+            self.loop.run_until_complete(self.bot_close())
 
-access_token = os.environ["ACCESS_TOKEN"]
-bot.run(access_token)
+    async def bot_start(self):
+        await self.db_connect()
+        await self.login(os.environ["ACCESS_TOKEN"])
+        await self.connect()
+
+    async def bot_close(self):
+        self.db.connection.close()
+        await super().logout()
+
+    async def db_connect(self):
+        try:
+            self.db = DatabaseConnection()
+        except Exception as e:
+            print(f"Error: {e}")
+
+    async def on_ready(self):
+        print(f'\nZalogowano jako : {self.user} - {self.user.id}\nWersja: {discord.__version__}\n')
+
+
+class DatabaseConnection:
+    def __init__(self):
+        try:
+            self.connection = psycopg2.connect(os.environ['DATABASE_URL'], sslmode='require')
+            self.connection.autocommit = True
+            self.cursor = self.connection.cursor()
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def create_table(self, ids):
+        with self.connection:
+            table_command = "CREATE TABLE users (id varchar, money integer, exp integer, level integer)"
+            self.cursor.execute(table_command)
+
+            insert_command = "INSERT INTO users(id, money, exp, level) VALUES (%s, %s, %s, %s)"
+            for id_ in ids:
+                self.cursor.execute(insert_command, (str(id_), 150, 0, 1))
+
+    def get_member(self, id_: str, *args):
+        id_ = str(id_)
+
+        getting_command = """
+        SELECT * FROM users
+        WHERE id=%s
+        """
+
+        self.cursor.execute(getting_command, (id_,))
+        member_info = self.cursor.fetchone()
+
+        db_names = {
+            "id": member_info[0],
+            "money": member_info[1],
+            "exp": member_info[2],
+            "level": member_info[3]
+        }
+
+        items = []
+        for arg in args:
+            items.append(db_names[arg])
+
+        if len(items) == 1:
+            return items[0]
+
+        return tuple(items)
+
+    def add_money(self, id_: str, amount: int):
+        id_ = str(id_)
+
+        money = self.get_member(id_, "money")
+        money += amount
+
+        update_command = """
+        UPDATE users
+        SET money=%s
+        WHERE id=%s
+        """
+
+        self.cursor.execute(update_command, (money, id_))
+        return money
+
+    def add_exp(self, id_: str, amount: int):
+        id_ = str(id_)
+
+        exp, level = self.get_member(id_, "exp", "level")
+        exp += amount
+
+        exp_to_lvlup = level * 110
+        if exp >= exp_to_lvlup:
+            exp = abs(exp_to_lvlup - exp)
+            self.add_level(id_, 1)
+
+        update_command = """
+        UPDATE users
+        SET exp=%s
+        WHERE id=%s
+        """
+
+        self.cursor.execute(update_command, (exp, id_))
+        return exp
+
+    def add_level(self, id_: str, amount: int):
+        id_ = str(id_)
+
+        level = self.get_member(id_, "level")
+        level += amount
+
+        update_command = """
+        UPDATE users
+        SET level=%s
+        WHERE id=%s
+        """
+
+        self.cursor.execute(update_command, (level, id_))
+        return level
+
+
+if __name__ == "__main__":
+    teinf_bot = TeinfBot()
+    teinf_bot.run()

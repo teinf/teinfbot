@@ -4,11 +4,10 @@ import asyncio
 from typing import List, Tuple
 import random
 import utils
-from waluta import Baza
 
 
 class Russian(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot):
         self.bot = bot
 
     def players_description(self, players):
@@ -78,13 +77,13 @@ class Russian(commands.Cog):
             return
 
         for player in players:
-            money = Baza.get_money(player.id)
+            money = self.bot.db.get_member(player.id, "money")
             if money < stawka:
                 players.remove(player)
                 await player.member.send(
                     "Niestety nie możesz zagrać w rosyjską ruletkę - masz za mało pieniędzy! - {}".format(money))
             else:
-                Baza.add_money(player.id, -stawka)
+                self.bot.db.add_money(player.id, stawka)
         print(players)
         if len(players) <= 1:
             return
@@ -159,8 +158,8 @@ class Russian(commands.Cog):
         exp_gained = money_gained // 2
         embed.set_footer(text=f"+{money_gained}cc, +{exp_gained}exp")
         await ctx.send(embed=embed)
-        Baza.add_money(winning_player.id, money_gained)
-        Baza.add_exp(winning_player.id, exp_gained)
+        self.bot.db.add_money(winning_player.id, money_gained)
+        self.bot.db.add_exp(winning_player.id, exp_gained)
 
 
 class Gun:

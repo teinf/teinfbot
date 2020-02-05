@@ -108,45 +108,45 @@ class Kasyno(commands.Cog):
 
     @commands.cooldown(3, 60, commands.BucketType.user)
     @commands.command()
-    async def zdrapka(self, ctx):
-        """ KOSZT ZDRAPKI 5 chillcoinów """
+    # async def zdrapka(self, ctx):
+    #     """ KOSZT ZDRAPKI 5 chillcoinów """
 
-        money = self.bot.db.get_member(ctx.author.id, "money")
-        if money < 5:
-            return
-        else:
-            self.bot.db.add_money(ctx.author.id, -5)
+    #     money = self.bot.db.get_member(ctx.author.id, "money")
+    #     if money < 5:
+    #         return
+    #     else:
+    #         self.bot.db.add_money(ctx.author.id, -5)
 
-        wygrane = {
-            0: 57,
-            5: 25,
-            10: 10,
-            20: 5,
-            100: 2,
-            500: 1,
-        }
+    #     wygrane = {
+    #         0: 57,
+    #         5: 25,
+    #         10: 10,
+    #         20: 5,
+    #         100: 2,
+    #         500: 1,
+    #     }
 
-        wygrana = random.choices(list(wygrane.keys()), weights=list(wygrane.values()))
-        wygrana = wygrana[0]
+    #     wygrana = random.choices(list(wygrane.keys()), weights=list(wygrane.values()))
+    #     wygrana = wygrana[0]
 
-        if wygrana == 0:
-            embed = discord.Embed(title="ZDRAPKA", description=f"{ctx.author} nic nie wygrałeś!",
-                                  color=discord.Color.red())
-        else:
-            embed = discord.Embed(title="ZDRAPKA", description=f"{ctx.author} wygrałeś {wygrana} chillcoinów!",
-                                  color=discord.Color.green())
+    #     if wygrana == 0:
+    #         embed = discord.Embed(title="ZDRAPKA", description=f"{ctx.author} nic nie wygrałeś!",
+    #                               color=discord.Color.red())
+    #     else:
+    #         embed = discord.Embed(title="ZDRAPKA", description=f"{ctx.author} wygrałeś {wygrana} chillcoinów!",
+    #                               color=discord.Color.green())
 
-        new_balance = self.bot.db.add_money(ctx.author.id, wygrana)
-        embed.set_footer(text=f"Nowy bilans: {new_balance}", icon_url=ctx.author.avatar_url)
-        self.bot.db.add_exp(ctx.author.id, wygrana // 5)
-        await ctx.send(embed=embed)
+    #     new_balance = self.bot.db.add_money(ctx.author.id, wygrana)
+    #     embed.set_footer(text=f"Nowy bilans: {new_balance}", icon_url=ctx.author.avatar_url)
+    #     self.bot.db.add_exp(ctx.author.id, wygrana // 5)
+    #     await ctx.send(embed=embed)
 
-    @zdrapka.error
-    async def zdrapka_error(self, ctx, error):
-        await ctx.author.send(error)
+    # @zdrapka.error
+    # async def zdrapka_error(self, ctx, error):
+    #     await ctx.author.send(error)
 
-    @commands.cooldown(1, 86400, commands.BucketType.user)
-    @commands.command()
+    # @commands.cooldown(1, 86400, commands.BucketType.user)
+    # @commands.command()
     async def daily_zdrapka(self, ctx):
         wygrane = {
             0: 57,

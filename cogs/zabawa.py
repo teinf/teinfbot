@@ -8,6 +8,7 @@ import gtts
 class Zabawa(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.arrow.start()
 
     @commands.command()
     async def lokieto(self, ctx, *reason):

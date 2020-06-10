@@ -9,7 +9,8 @@ EXTENSIONS = [
     "cogs.zabawa",
     "cogs.owner",
     "cogs.interaktywne",
-    "cogs.russian_roulette"
+    "cogs.russian_roulette",
+    "cogs.web"
 ]
 
 
@@ -50,13 +51,15 @@ class TeinfBot(commands.Bot):
             print(f"Error: {e}")
 
     async def on_ready(self):
-        print(f'\nZalogowano jako : {self.user} - {self.user.id}\nWersja: {discord.__version__}\n')
+        print(
+            f'\nZalogowano jako : {self.user} - {self.user.id}\nWersja: {discord.__version__}\n')
 
 
 class DatabaseConnection:
     def __init__(self):
         try:
-            self.connection = psycopg2.connect(os.environ['DATABASE_URL'], sslmode='require')
+            self.connection = psycopg2.connect(
+                os.environ['DATABASE_URL'], sslmode='require')
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
         except Exception as e:

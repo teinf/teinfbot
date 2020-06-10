@@ -13,25 +13,7 @@ class Web(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.tree_channel: discord.TextChannel = self.bot.get_channel(660427011642359811)
-        self.refresh_stats.start()
         self.memes_channel = self.bot.get_channel(668128841134374924)
-
-    @staticmethod
-    async def get_trees() -> str:
-        my_url = 'https://teamtrees.org'
-        async with aiohttp.ClientSession() as session:
-            async with session.get(my_url) as resp:
-                data = io.BytesIO(await resp.read())
-                soup = BeautifulSoup(data, "html.parser")
-
-                match = soup.find('div', class_="counter")
-                trees_amount = int(match["data-count"])
-                return "{0:,}".format(trees_amount)
-
-    @tasks.loop(seconds=30.0)
-    async def refresh_stats(self):
-        await self.tree_channel.edit(name="🌳 " + await self.get_trees())
 
     @staticmethod
     async def get_suchar() -> str:
@@ -77,42 +59,21 @@ class Web(commands.Cog):
 
         return em
 
-    async def is_meme_channel(self, ctx) -> bool:
-        if ctx.channel.id != self.memes_channel.id:
-            await ctx.channel.send(embed=discord.Embed(
-                title=f"{ctx.author}, nie ten kanał...",
-                description=f"Jeśli chcesz zobaczyć memy zobacz #{self.memes_channel.name}",
-                color=discord.Color.purple()
-            ), delete_after=10)
-
-            await ctx.message.delete()
-            return False
-        else:
-            return True
-
     @commands.command()
     async def mem(self, ctx):
-        if not await self.is_meme_channel(ctx):
-            return
         await ctx.channel.send(embed=await self.get_meme_embed(await self.get_meme()))
 
-    @commands.command()
-    async def strona_memow(self, ctx):
-        if not await self.is_meme_channel(ctx):
-            return
-        for meme in await self.get_meme(full_page=True):
-            await ctx.channel.send(embed=await self.get_meme_embed(meme))
+    # @commands.command()
+    # async def strona_memow(self, ctx):
+    #     for meme in await self.get_meme(full_page=True):
+    #         await ctx.channel.send(embed=await self.get_meme_embed(meme))
 
     @commands.command()
     async def nowy_mem(self, ctx):
-        if not await self.is_meme_channel(ctx):
-            return
         await ctx.channel.send(embed=await self.get_meme_embed(await self.get_meme(first_page=True)))
 
     @commands.command()
     async def suchar(self, ctx):
-        if not await self.is_meme_channel(ctx):
-            return
         await ctx.channel.send(await self.get_suchar())
 
 

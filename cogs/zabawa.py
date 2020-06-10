@@ -1,6 +1,6 @@
 import discord
 import random
-from discord.ext import commands
+from discord.ext import commands, tasks
 from gtts import gTTS
 import gtts
 
@@ -12,8 +12,10 @@ class Zabawa(commands.Cog):
     @commands.command()
     async def lokieto(self, ctx, *reason):
         to_slap = random.choice(ctx.guild.members)
-        slapDescription = '{0.author} walnął z łokieta {1} *{2}*'.format(ctx, to_slap, " ".join(reason))
-        em = discord.Embed(title="ŁOKIETO", description=slapDescription, colour=discord.Colour.gold())
+        slapDescription = '{0.author} walnął z łokieta {1} *{2}*'.format(
+            ctx, to_slap, " ".join(reason))
+        em = discord.Embed(
+            title="ŁOKIETO", description=slapDescription, colour=discord.Colour.gold())
         await ctx.send(embed=em)
 
     @commands.command(name="kutas")
@@ -57,6 +59,21 @@ class Zabawa(commands.Cog):
         with open(file_path, 'wb') as f:
             tts.write_to_fp(f)
         await ctx.send(file=discord.File(file_path))
+
+    def losoweSlowo(self, plik):
+        slowa = []
+        with open(plik, "r") as f:
+            slowa = f.readlines()
+        return random.choice(slowa).strip()
+
+    @tasks.loop(seconds=10.0)
+    async def arrow(self, ctx):
+        usr = self.bot.get_user(239329824361938944)
+        losowe = self.losoweSlowo("przymiotniki.txt") + \
+            self.losoweSlowo("rzeczowniki.txt")
+        await usr.edit(nick=losowe)
+        ogolny = self.bot.get_channel(668140025061441570)
+        await ogolny.send("Arrow:", losowe)
 
 
 def setup(bot):

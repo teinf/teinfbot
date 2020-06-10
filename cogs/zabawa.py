@@ -77,9 +77,9 @@ class Zabawa(commands.Cog):
         usr = teinf.get_member(239329824361938944)
         losowe = self.losoweSlowo("cogs/przymiotniki.txt") + " " + \
             self.losoweSlowo("cogs/rzeczowniki.txt")
-        # await usr.edit(nick=losowe)
-        # channel = teinf.get_channel(668140025061441570)
-        # await channel.send("ARROW:" + " " + losowe)
+        await usr.edit(nick=losowe)
+        channel = teinf.get_channel(668140025061441570)
+        await channel.send("ARROW:" + " " + losowe)
 
 
 def setup(bot):

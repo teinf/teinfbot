@@ -8,6 +8,9 @@ import gtts
 class Zabawa(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_ready(self):
         self.arrow.start()
 
     @commands.command()
@@ -61,20 +64,22 @@ class Zabawa(commands.Cog):
             tts.write_to_fp(f)
         await ctx.send(file=discord.File(file_path))
 
-    def losoweSlowo(self, plik):
+    @staticmethod
+    def losoweSlowo(plik):
         slowa = []
         with open(plik, "r") as f:
             slowa = f.readlines()
         return random.choice(slowa).strip()
 
-    @tasks.loop(seconds=10.0)
-    async def arrow(self, ctx):
-        usr = self.bot.get_user(239329824361938944)
-        losowe = self.losoweSlowo("przymiotniki.txt") + \
-            self.losoweSlowo("rzeczowniki.txt")
+    @tasks.loop(minutes=30.0)
+    async def arrow(self):
+        teinf = self.bot.get_guild(406476256646004736)
+        usr = teinf.get_member(239329824361938944)
+        losowe = self.losoweSlowo("cogs/przymiotniki.txt") + " " + \
+            self.losoweSlowo("cogs/rzeczowniki.txt")
         await usr.edit(nick=losowe)
-        ogolny = self.bot.get_channel(668140025061441570)
-        await ogolny.send("Arrow:", losowe)
+        channel = teinf.get_channel(668140025061441570)
+        await channel.send("ARROW:" + " " + losowe)
 
 
 def setup(bot):

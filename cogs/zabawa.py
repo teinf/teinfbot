@@ -78,7 +78,7 @@ class Zabawa(commands.Cog):
         losowe = self.losoweSlowo("cogs/przymiotniki.txt") + " " + \
             self.losoweSlowo("cogs/rzeczowniki.txt")
         await usr.edit(nick=losowe)
-        channel = teinf.get_channel(668140025061441570)
+        channel = teinf.get_channel(720628646267584572)
         await channel.send("ARROW:" + " " + losowe)
 
 

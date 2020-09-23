@@ -1,65 +1,13 @@
-import os
-import discord
 import psycopg2
-from discord.ext import commands
+import os
 
-EXTENSIONS = [
-    "cogs.handle_db",
-    "cogs.kasyno",
-    "cogs.zabawa",
-    "cogs.owner",
-    "cogs.interaktywne",
-    "cogs.russian_roulette",
-    "cogs.web"
-]
-
-
-class TeinfBot(commands.Bot):
-    def __init__(self):
-        super().__init__(
-            command_prefix=".",
-            reconnect=True,
-        )
-        self.db = None
-
-        for extension in EXTENSIONS:
-            try:
-                self.load_extension(extension)
-                print(f"[EXT] Success - {extension}")
-            except commands.ExtensionNotFound:
-                print(f"[EXT] Failed - {extension}")
-
-    def run(self):
-        try:
-            self.loop.run_until_complete(self.bot_start())
-        except KeyboardInterrupt:
-            self.loop.run_until_complete(self.bot_close())
-
-    async def bot_start(self):
-        await self.db_connect()
-        await self.login(os.environ["ACCESS_TOKEN"])
-        await self.connect()
-
-    async def bot_close(self):
-        self.db.connection.close()
-        await super().logout()
-
-    async def db_connect(self):
-        try:
-            self.db = DatabaseConnection()
-        except Exception as e:
-            print(f"Error: {e}")
-
-    async def on_ready(self):
-        print(
-            f'\nZalogowano jako : {self.user} - {self.user.id}\nWersja: {discord.__version__}\n')
-
-
-class DatabaseConnection:
-    def __init__(self):
+class Database:
+    def __init__(self, url: str):
         try:
             self.connection = psycopg2.connect(
-                os.environ['DATABASE_URL'], sslmode='require')
+                url,
+                sslmode='require'
+                )
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
         except Exception as e:
@@ -150,8 +98,3 @@ class DatabaseConnection:
 
         self.cursor.execute(update_command, (level, id_))
         return level
-
-
-if __name__ == "__main__":
-    teinf_bot = TeinfBot()
-    teinf_bot.run()

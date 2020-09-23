@@ -1,6 +1,7 @@
 import discord
 import random
 from discord.ext import commands
+from teinfbot import db
 
 
 class Kasyno(commands.Cog):
@@ -29,12 +30,12 @@ class Kasyno(commands.Cog):
         if bet <= 0:
             return
 
-        money = self.bot.db.get_member(ctx.author.id, "money")
+        money = db.get_member(ctx.author.id, "money")
         if money < bet:
             await ctx.author.send(f"Nie masz wystarczająco pieniędzy - brakuje `{abs(bet - money)}` chillcoinów")
             return
 
-        after_bet_balance = self.bot.db.add_money(ctx.author.id, -bet)
+        after_bet_balance = db.add_money(ctx.author.id, -bet)
 
         czarne = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]
         czerwone = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
@@ -93,8 +94,8 @@ class Kasyno(commands.Cog):
 
         if wygrana > 0:
             em.add_field(name="**Profit** :", value=f"**+{wygrana}** chillcoinsów", inline=False)
-            new_balance = self.bot.db.add_money(ctx.author.id, wygrana)
-            self.bot.db.add_exp(ctx.author.id, wygrana // 10)
+            new_balance = db.add_money(ctx.author.id, wygrana)
+            db.add_exp(ctx.author.id, wygrana // 10)
             em.set_footer(text=str(ctx.author) + f": +{wygrana}CC, +{wygrana // 10}EXP, BILANS {new_balance}",
                           icon_url=ctx.author.avatar_url)
         else:
@@ -111,11 +112,11 @@ class Kasyno(commands.Cog):
     async def zdrapka(self, ctx):
         """ KOSZT ZDRAPKI 10 chillcoinów """
 
-        money = self.bot.db.get_member(ctx.author.id, "money")
+        money = db.get_member(ctx.author.id, "money")
         if money < 5:
             return
         else:
-            self.bot.db.add_money(ctx.author.id, -10)
+            db.add_money(ctx.author.id, -10)
 
         wygrane = {
             0: 57,
@@ -136,9 +137,9 @@ class Kasyno(commands.Cog):
             embed = discord.Embed(title="ZDRAPKA", description=f"{ctx.author} wygrałeś {wygrana} chillcoinów!",
                                   color=discord.Color.green())
 
-        new_balance = self.bot.db.add_money(ctx.author.id, wygrana)
+        new_balance = db.add_money(ctx.author.id, wygrana)
         embed.set_footer(text=f"Nowy bilans: {new_balance}", icon_url=ctx.author.avatar_url)
-        self.bot.db.add_exp(ctx.author.id, wygrana // 5)
+        db.add_exp(ctx.author.id, wygrana // 5)
         await ctx.send(embed=embed)
 
     @zdrapka.error
@@ -160,7 +161,7 @@ class Kasyno(commands.Cog):
         wygrana = random.choices(list(wygrane.keys()), weights=list(wygrane.values()))
         wygrana = wygrana[0]
 
-        new_balance = self.bot.db.add_money(ctx.author.id, wygrana)
+        new_balance = db.add_money(ctx.author.id, wygrana)
 
         if wygrana == 0:
             embed = discord.Embed(

@@ -3,10 +3,11 @@ from discord.ext import commands
 import asyncio
 from typing import List, Tuple
 import random
-import utils
+from teinfbot import utils
+from teinfbot import db
 
 
-class Russian(commands.Cog):
+class RussianRoulette(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -77,13 +78,13 @@ class Russian(commands.Cog):
             return
 
         for player in players:
-            money = self.bot.db.get_member(player.id, "money")
+            money = db.get_member(player.id, "money")
             if money < stawka:
                 players.remove(player)
                 await player.member.send(
                     "Niestety nie możesz zagrać w rosyjską ruletkę - masz za mało pieniędzy! - {}".format(money))
             else:
-                self.bot.db.add_money(player.id, stawka)
+                db.add_money(player.id, stawka)
         print(players)
         if len(players) <= 1:
             return
@@ -158,8 +159,8 @@ class Russian(commands.Cog):
         exp_gained = money_gained // 2
         embed.set_footer(text=f"+{money_gained}cc, +{exp_gained}exp")
         await ctx.send(embed=embed)
-        self.bot.db.add_money(winning_player.id, money_gained)
-        self.bot.db.add_exp(winning_player.id, exp_gained)
+        db.add_money(winning_player.id, money_gained)
+        db.add_exp(winning_player.id, exp_gained)
 
 
 class Gun:
@@ -260,4 +261,4 @@ class Player:
 
 
 def setup(bot):
-    bot.add_cog(Russian(bot))
+    bot.add_cog(RussianRoulette(bot))

@@ -139,3 +139,4 @@ __pycache__/
 .db
 discord_users.db
 discord_users
+cogs/.DS_Store

@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-
+from teinfbot import db
 
 class Kasa(commands.Cog):
     def __init__(self, bot):
@@ -8,15 +8,15 @@ class Kasa(commands.Cog):
 
     @commands.command()
     async def get_user(self, ctx, member: discord.Member):
-        await ctx.send(self.bot.db.get_member_info(str(member.id)))
+        await ctx.send(db.get_member_info(str(member.id)))
 
     @commands.is_owner()
     @commands.command()
     async def add_money(self, ctx, member: discord.Member, amount: int):
-        new_balance = self.bot.db.add_money(str(member.id), amount)
+        new_balance = db.add_money(str(member.id), amount)
         embd = discord.Embed(
             title="💵  TEINF BANK  💵",
-            description=f"Nowy stan konta {ctx.author.mention}:\n`- {new_balance} chillcoinów`",
+            description=f"Nowy stan konta {member.mention}:\n`- {new_balance} chillcoinów`",
             color=discord.Color.green()
         )
         await ctx.send(embed=embd)
@@ -24,7 +24,7 @@ class Kasa(commands.Cog):
     @commands.is_owner()
     @commands.command()
     async def add_exp(self, ctx, member: discord.Member, amount: int):
-        new_balance = self.bot.db.add_exp(str(member.id), amount)
+        new_balance = db.add_exp(str(member.id), amount)
         embd = discord.Embed(
             title="💵  TEINF BANK  💵",
             description=f"Dodano {amount} EXP dla {ctx.author.mention}",
@@ -34,7 +34,7 @@ class Kasa(commands.Cog):
 
     @commands.command()
     async def stan(self, ctx):
-        balance = self.bot.db.get_member(str(ctx.author.id), "money")
+        balance = db.get_member(str(ctx.author.id), "money")
         embd = discord.Embed(
             title="💵  TEINF BANK  💵",
             description=f"Stan konta {ctx.author.mention}:\n`- {balance} chillcoinów`",
@@ -45,7 +45,7 @@ class Kasa(commands.Cog):
 
     @commands.command()
     async def level(self, ctx: commands.Context):
-        exp, level = self.bot.db.get_member(str(ctx.author.id), "exp", "level")
+        exp, level = db.get_member(str(ctx.author.id), "exp", "level")
         missing_exp_to_lvlup = int(exp - (level * 110))
         missing_exp_to_lvlup = abs(missing_exp_to_lvlup)
 
@@ -62,9 +62,9 @@ class Kasa(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 86400, commands.BucketType.user)
     async def daily(self, ctx):
-        level = self.bot.db.get_member(str(ctx.author.id), "level")
+        level = db.get_member(str(ctx.author.id), "level")
         daily_amount = level * 10
-        new_balance = self.bot.db.add_money(ctx.author.id, daily_amount)
+        new_balance = db.add_money(ctx.author.id, daily_amount)
 
         embd = discord.Embed(
             title="💵 TEINF BANK 💵",

@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
 
 
-class Web(commands.Cog):
+class Memes(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -78,4 +78,4 @@ class Web(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Web(bot))
+    bot.add_cog(Memes(bot))

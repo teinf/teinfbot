@@ -2,6 +2,7 @@ import discord
 import random
 from discord.ext import commands
 from teinfbot import db
+from teinfbot.models import TeinfMember, Tranzakcje
 
 
 class Kasyno(commands.Cog):
@@ -30,12 +31,13 @@ class Kasyno(commands.Cog):
         if bet <= 0:
             return
 
-        money = db.get_member(ctx.author.id, "money")
-        if money < bet:
-            await ctx.author.send(f"Nie masz wystarczająco pieniędzy - brakuje `{abs(bet - money)}` chillcoinów")
-            return
+        author: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
 
-        after_bet_balance = db.add_money(ctx.author.id, -bet)
+        if author.money < bet:
+            await ctx.author.send(f"Nie masz wystarczająco pieniędzy - brakuje `{abs(bet - author.money)}` chillcoinów")
+            return
+        else:
+            author.money -= bet
 
         czarne = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]
         czerwone = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
@@ -58,20 +60,20 @@ class Kasyno(commands.Cog):
             "reaction_add",
             check=lambda react, usr: usr == ctx.author and react.message.id == message.id)
 
-        result = circles.index(reaction.emoji) + 1
+        chosenColor = circles.index(reaction.emoji) + 1
 
         winning_number = random.randint(0, 36)
-        wygrana = 0
+        betWinAmount = 0
 
-        if result == 1:
+        if chosenColor == 1:
             if winning_number in czarne:
-                wygrana = bet * 2
-        elif result == 2:
+                betWinAmount = bet * 2
+        elif chosenColor == 2:
             if winning_number in czerwone:
-                wygrana = bet * 2
-        elif result == 3:
+                betWinAmount = bet * 2
+        elif chosenColor == 3:
             if winning_number == 0:
-                wygrana = bet * 14
+                betWinAmount = bet * 14
 
         desc = ""
         if winning_number in czarne:
@@ -81,7 +83,7 @@ class Kasyno(commands.Cog):
         elif winning_number == 0:
             desc += "Zielona"
 
-        if wygrana <= 0:
+        if betWinAmount <= 0:
             kolor = discord.Color.red()
             text = "PRZEGRAŁEŚ! \U0001F602"
         else:
@@ -92,14 +94,15 @@ class Kasyno(commands.Cog):
         em.add_field(name=f"**{text}**", value=f"Wygrywająca liczba : **{winning_number}**", inline=False)
         em.add_field(name=f"**INFO O LICZBIE**", value=desc)
 
-        if wygrana > 0:
-            em.add_field(name="**Profit** :", value=f"**+{wygrana}** chillcoinsów", inline=False)
-            new_balance = db.add_money(ctx.author.id, wygrana)
-            db.add_exp(ctx.author.id, wygrana // 10)
-            em.set_footer(text=str(ctx.author) + f": +{wygrana}CC, +{wygrana // 10}EXP, BILANS {new_balance}",
+        if betWinAmount > 0:
+            author.money += betWinAmount
+            em.add_field(name="**Profit** :", value=f"**+{betWinAmount}** chillcoinsów", inline=False)
+            new_balance = db.add_money(ctx.author.id, betWinAmount)
+            db.add_exp(ctx.author.id, betWinAmount // 10)
+            em.set_footer(text=str(ctx.author) + f": +{betWinAmount}CC, +{betWinAmount // 10}EXP, BILANS {new_balance}",
                           icon_url=ctx.author.avatar_url)
         else:
-            em.set_footer(text=str(ctx.author) + f":BILANS {after_bet_balance}", icon_url=ctx.author.avatar_url)
+            em.set_footer(text=str(ctx.author) + f":BILANS {author.money}", icon_url=ctx.author.avatar_url)
 
         await ctx.send(embed=em)
 
@@ -111,12 +114,14 @@ class Kasyno(commands.Cog):
     @commands.command()
     async def zdrapka(self, ctx):
         """ KOSZT ZDRAPKI 10 chillcoinów """
+        author: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
 
-        money = db.get_member(ctx.author.id, "money")
-        if money < 5:
+        ZDRAPKA_COST = 5
+
+        if author.money < ZDRAPKA_COST:
             return
         else:
-            db.add_money(ctx.author.id, -10)
+            author.money -= ZDRAPKA_COST
 
         wygrane = {
             0: 57,
@@ -137,8 +142,8 @@ class Kasyno(commands.Cog):
             embed = discord.Embed(title="ZDRAPKA", description=f"{ctx.author} wygrałeś {wygrana} chillcoinów!",
                                   color=discord.Color.green())
 
-        new_balance = db.add_money(ctx.author.id, wygrana)
-        embed.set_footer(text=f"Nowy bilans: {new_balance}", icon_url=ctx.author.avatar_url)
+        author.money += wygrana
+        embed.set_footer(text=f"Nowy bilans: {author.money}", icon_url=ctx.author.avatar_url)
         db.add_exp(ctx.author.id, wygrana // 5)
         await ctx.send(embed=embed)
 
@@ -162,7 +167,7 @@ class Kasyno(commands.Cog):
         wygrana = wygrana[0]
 
         new_balance = db.add_money(ctx.author.id, wygrana)
-
+        
         if wygrana == 0:
             embed = discord.Embed(
                 title="DAILY ZDRAPKA",

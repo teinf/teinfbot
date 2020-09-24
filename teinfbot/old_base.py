@@ -32,7 +32,7 @@ class Database:
 
         self.cursor.execute(getting_command, (id_,))
         member_info = self.cursor.fetchone()
-
+    
         db_names = {
             "id": member_info[0],
             "money": member_info[1],

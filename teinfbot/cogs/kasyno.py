@@ -98,10 +98,11 @@ class Kasyno(commands.Cog):
 
         if betWinAmount > 0:
             author.money += betWinAmount
+            author.exp += betWinAmount // 10
             em.add_field(name="**Profit** :", value=f"**+{betWinAmount}** chillcoinsów", inline=False)
-            new_balance = db.add_money(ctx.author.id, betWinAmount)
-            db.add_exp(ctx.author.id, betWinAmount // 10)
-            em.set_footer(text=str(ctx.author) + f": +{betWinAmount}CC, +{betWinAmount // 10}EXP, BILANS {new_balance}",
+
+
+            em.set_footer(text=str(ctx.author) + f": +{betWinAmount}CC, +{betWinAmount // 10}EXP, BILANS {author.money}",
                           icon_url=ctx.author.avatar_url)
         else:
             em.set_footer(text=str(ctx.author) + f":BILANS {author.money}", icon_url=ctx.author.avatar_url)
@@ -145,8 +146,8 @@ class Kasyno(commands.Cog):
                                   color=discord.Color.green())
 
         author.money += wygrana
+        author.exp += wygrana//5
         embed.set_footer(text=f"Nowy bilans: {author.money}", icon_url=ctx.author.avatar_url)
-        db.add_exp(ctx.author.id, wygrana // 5)
         await ctx.send(embed=embed)
 
     @zdrapka.error
@@ -168,7 +169,8 @@ class Kasyno(commands.Cog):
         wygrana = random.choices(list(wygrane.keys()), weights=list(wygrane.values()))
         wygrana = wygrana[0]
 
-        new_balance = db.add_money(ctx.author.id, wygrana)
+        author: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
+        author.money += wygrana
 
         if wygrana == 0:
             embed = discord.Embed(
@@ -183,7 +185,7 @@ class Kasyno(commands.Cog):
                 color=discord.Color.green()
             )
 
-        embed.set_footer(text=f"Nowy bilans: {new_balance}", icon_url=ctx.author.avatar_url)
+        embed.set_footer(text=f"Nowy bilans: {author.money}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
     @daily_zdrapka.error

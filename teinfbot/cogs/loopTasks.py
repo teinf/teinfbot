@@ -6,7 +6,6 @@ from discord.ext import commands, tasks
 from teinfbot import TeinfBot
 from teinfbot.paths import PATH_ASSETS
 
-
 class LoopTasks(commands.Cog):
 
     def __init__(self, bot: TeinfBot):

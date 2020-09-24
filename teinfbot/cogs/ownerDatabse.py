@@ -1,10 +1,11 @@
 import math
+from typing import List
 
 import discord
 from discord.ext import commands
 
+from teinfbot.models import TeinfMember, Tranzakcje
 from teinfbot import db
-from teinfbot.models import TeinfMember
 
 LEVEL_MULTIPLIER = 0.15
 
@@ -12,10 +13,6 @@ LEVEL_MULTIPLIER = 0.15
 class Kasa(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.command()
-    async def get_user(self, ctx, member: discord.Member):
-        await ctx.send(db.get_member_info(str(member.id)))
 
     @commands.is_owner()
     @commands.command()
@@ -45,7 +42,8 @@ class Kasa(commands.Cog):
 
     @commands.command()
     async def stan(self, ctx, member: discord.Member = None):
-        member = member or ctx.author.id
+        if member is None:
+            member = ctx.author
         teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
 
         embd = discord.Embed(
@@ -55,6 +53,17 @@ class Kasa(commands.Cog):
         )
 
         await ctx.send(embed=embd)
+
+    @commands.command()
+    async def tranzakcje(self, ctx, member: discord.Member = None):
+        if member is None:
+            member = ctx.author
+        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
+        transactionStr = ""
+        transactions: List[Tranzakcje] = teinf_member.Tranzakcje
+        for transaction in transactions:
+            transactionStr += f"{transaction.date}: P:{transaction.profit} B: {transaction.balance}\n"
+        await ctx.channel.send(transactionStr)
 
     @staticmethod
     def level_from_exp(exp: int):
@@ -69,7 +78,7 @@ class Kasa(commands.Cog):
 
     @commands.command()
     async def level(self, ctx: commands.Context, member: discord.Member = None):
-        member = member or ctx.author.id
+        member = member or ctx.author
         teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
         level = self.level_from_exp(teinf_member.exp)
         next_level_exp = self.exp_from_level(level + 1)

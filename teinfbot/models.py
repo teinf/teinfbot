@@ -29,11 +29,12 @@ class Tranzakcje(Base):
     __tablename__ = "Tranzakcje"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    date = Column(DateTime, default=datetime.now())
+    date = Column(DateTime)
     profit = Column(Integer)
     balance = Column(Integer)
 
-    def __init__(self, profit: int, balance: int):
+    def __init__(self, date: datetime, profit: int, balance: int):
+        self.date = date
         self.profit = profit
         self.balance = balance
 

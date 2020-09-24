@@ -5,7 +5,8 @@ import aiohttp
 import discord
 from bs4 import BeautifulSoup
 from discord.ext import commands
-
+from teinfbot.models import TeinfMember
+from teinfbot import db
 
 class Memes(commands.Cog):
     def __init__(self, bot):
@@ -14,6 +15,13 @@ class Memes(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.memes_channel = self.bot.get_channel(668128841134374924)
+        # KONSERWACJA
+        # for member in self.bot.get_all_members():
+        #     tm = TeinfMember(int(member.id), 300, 0)
+        #     print(member.id)
+        #     db.session.add(tm)
+        # for i in db.session.query(TeinfMember).all():
+        #     print(i.Tranzakcje)
 
     @staticmethod
     async def get_suchar() -> str:

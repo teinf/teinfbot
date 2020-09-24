@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import event
 from sqlalchemy.orm import sessionmaker
 
@@ -9,5 +11,5 @@ session = Session()
 
 @event.listens_for(TeinfMember.money, 'set', propagate=True)
 def receive_append(target: TeinfMember, value: int, oldvalue: int, initiator):
-    transaction = Tranzakcje(value - oldvalue, value)
+    transaction = Tranzakcje(datetime.now(), value - oldvalue, value)
     target.Tranzakcje.append(transaction)

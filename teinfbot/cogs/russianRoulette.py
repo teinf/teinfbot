@@ -81,7 +81,7 @@ class RussianRoulette(commands.Cog):
             return
 
         for player in players:
-            member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=id).first()
+            member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=player.id).first()
             money = member.money
             if money < BET_AMOUNT:
                 players.remove(player)

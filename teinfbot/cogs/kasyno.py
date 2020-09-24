@@ -71,7 +71,7 @@ class Kasyno(commands.Cog):
                 wygrana = bet * 2
         elif result == 3:
             if winning_number == 0:
-                wygrana = bet * 35
+                wygrana = bet * 14
 
         desc = ""
         if winning_number in czarne:

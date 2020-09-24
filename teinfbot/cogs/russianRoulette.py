@@ -84,8 +84,8 @@ class RussianRoulette(commands.Cog):
                 await player.member.send(
                     "Niestety nie możesz zagrać w rosyjską ruletkę - masz za mało pieniędzy! - {}".format(money))
             else:
-                db.add_money(player.id, stawka)
-        print(players)
+                db.add_money(player.id, -stawka)
+
         if len(players) <= 1:
             return
 

@@ -1,8 +1,10 @@
-import discord
 import random
+
+import discord
 from discord.ext import commands
+
 from teinfbot import db
-from teinfbot.models import TeinfMember, Tranzakcje
+from teinfbot.models import TeinfMember
 
 
 class Kasyno(commands.Cog):
@@ -167,7 +169,7 @@ class Kasyno(commands.Cog):
         wygrana = wygrana[0]
 
         new_balance = db.add_money(ctx.author.id, wygrana)
-        
+
         if wygrana == 0:
             embed = discord.Embed(
                 title="DAILY ZDRAPKA",

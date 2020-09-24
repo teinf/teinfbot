@@ -1,7 +1,8 @@
-import discord
 import random
+
+import discord
 from discord.ext import commands
-import os
+
 
 class Zabawa(commands.Cog):
     def __init__(self, bot):
@@ -37,7 +38,6 @@ class Zabawa(commands.Cog):
         alphabet = "ABCDEFGHIJKLMNOPRSTUVWXYZ"
         random_letter = random.choice(alphabet)
         await ctx.send(random_letter + "yzio")
-    
 
 
 def setup(bot):

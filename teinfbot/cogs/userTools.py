@@ -1,8 +1,4 @@
 import discord
-import asyncio
-import random
-import datetime
-import json
 from discord.ext import commands
 
 
@@ -40,12 +36,13 @@ class UserTools(commands.Cog):
         }
         wiadomosc = ""
         for key, value in informacje.items():
-            #print(key, ":", value)
+            # print(key, ":", value)
             wiadomosc += key + " : " + str(value) + "\n"
         # wiadomosc = "```py\nNick: {0.name}\nID: {0.id}\nStatus: {0.status}\nNajwyższa rola: {0.top_role}\nDołączył/a: {0.joined_at}\n#: {0.discriminator}\nAvatar: {0.avatar_url}\nCo robi aktualnie: {0.activities}\nServer: {0.guild}```"
         em = discord.Embed(
             title=f"Informacje o {informacje['Nick']}", description=wiadomosc, colour=discord.Colour.green())
         await ctx.send(embed=em)
+
 
 def setup(bot):
     bot.add_cog(UserTools(bot))

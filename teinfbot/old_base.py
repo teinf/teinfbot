@@ -1,5 +1,5 @@
 import psycopg2
-import os
+
 
 class Database:
     def __init__(self, url: str):
@@ -7,7 +7,7 @@ class Database:
             self.connection = psycopg2.connect(
                 url,
                 sslmode='require'
-                )
+            )
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
         except Exception as e:
@@ -32,7 +32,7 @@ class Database:
 
         self.cursor.execute(getting_command, (id_,))
         member_info = self.cursor.fetchone()
-    
+
         db_names = {
             "id": member_info[0],
             "money": member_info[1],

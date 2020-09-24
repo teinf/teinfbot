@@ -1,6 +1,13 @@
+import math
+
 import discord
 from discord.ext import commands
+
 from teinfbot import db
+from teinfbot.models import TeinfMember
+
+LEVEL_MULTIPLIER = 0.15
+
 
 class Kasa(commands.Cog):
     def __init__(self, bot):
@@ -13,10 +20,12 @@ class Kasa(commands.Cog):
     @commands.is_owner()
     @commands.command()
     async def add_money(self, ctx, member: discord.Member, amount: int):
-        new_balance = db.add_money(str(member.id), amount)
+        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
+        teinf_member.money += amount
+
         embd = discord.Embed(
             title="💵  TEINF BANK  💵",
-            description=f"Nowy stan konta {member.mention}:\n`- {new_balance} chillcoinów`",
+            description=f"Nowy stan konta {member.mention}:\n`- {teinf_member.money} chillcoinów`",
             color=discord.Color.green()
         )
         await ctx.send(embed=embd)
@@ -24,7 +33,9 @@ class Kasa(commands.Cog):
     @commands.is_owner()
     @commands.command()
     async def add_exp(self, ctx, member: discord.Member, amount: int):
-        new_balance = db.add_exp(str(member.id), amount)
+        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
+        teinf_member.money += amount
+
         embd = discord.Embed(
             title="💵  TEINF BANK  💵",
             description=f"Dodano {amount} EXP dla {ctx.author.mention}",
@@ -33,25 +44,40 @@ class Kasa(commands.Cog):
         await ctx.send(embed=embd)
 
     @commands.command()
-    async def stan(self, ctx):
-        balance = db.get_member(str(ctx.author.id), "money")
+    async def stan(self, ctx, member: discord.Member = None):
+        member = member or ctx.author.id
+        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
+
         embd = discord.Embed(
             title="💵  TEINF BANK  💵",
-            description=f"Stan konta {ctx.author.mention}:\n`- {balance} chillcoinów`",
+            description=f"Stan konta {member.mention}:\n`- {teinf_member.money} chillcoinów`",
             color=discord.Color.green()
         )
 
         await ctx.send(embed=embd)
 
+    @staticmethod
+    def level_from_exp(exp: int):
+        if exp == 0:
+            return 0
+
+        return int(LEVEL_MULTIPLIER * math.sqrt(exp))
+
+    @staticmethod
+    def exp_from_level(level: int):
+        return int(level * level * (1 / LEVEL_MULTIPLIER) * (1 / LEVEL_MULTIPLIER))
+
     @commands.command()
-    async def level(self, ctx: commands.Context):
-        exp, level = db.get_member(str(ctx.author.id), "exp", "level")
-        missing_exp_to_lvlup = int(exp - (level * 110))
-        missing_exp_to_lvlup = abs(missing_exp_to_lvlup)
+    async def level(self, ctx: commands.Context, member: discord.Member = None):
+        member = member or ctx.author.id
+        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
+        level = self.level_from_exp(teinf_member.exp)
+        next_level_exp = self.exp_from_level(level + 1)
+        missing_exp_to_lvlup = next_level_exp - teinf_member.exp
 
         embed = discord.Embed(
             title="💎 LEVEL 💎",
-            description=f"Wykres poziomu {ctx.author.mention}\n`{level}LVL - {exp}EXP.`\nBrakuje `{missing_exp_to_lvlup}` do kolejnego poziomu.",
+            description=f"Wykres poziomu {member.mention}\n`{level}LVL - {teinf_member.exp}EXP.`\nBrakuje `{missing_exp_to_lvlup}` do kolejnego poziomu.",
             color=discord.Color.blue()
         )
 
@@ -62,14 +88,15 @@ class Kasa(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 86400, commands.BucketType.user)
     async def daily(self, ctx):
-        level = db.get_member(str(ctx.author.id), "level")
+        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
+        level = self.level_from_exp(teinf_member.exp)
         daily_amount = level * 10
-        new_balance = db.add_money(ctx.author.id, daily_amount)
+        teinf_member.money += daily_amount
 
         embd = discord.Embed(
             title="💵 TEINF BANK 💵",
             description=f"{ctx.author.mention}, dostajesz {daily_amount} chillcoinsów\n"
-                        f"Nowy stan konta: `{new_balance} CC`",
+                        f"Nowy stan konta: `{teinf_member.money} CC`",
             color=discord.Color.green()
         )
         await ctx.send(embed=embd)

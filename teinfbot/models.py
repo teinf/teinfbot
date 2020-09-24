@@ -1,22 +1,23 @@
-import sqlalchemy
 import os
-
+from datetime import datetime
+import sqlalchemy
+from sqlalchemy import Column, Integer, ForeignKey, BigInteger, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger
 from sqlalchemy.orm import relationship
 
-engine = sqlalchemy.create_engine(os.environ.get("DATABASE_URL"), echo=True)
+engine = sqlalchemy.create_engine(os.environ.get("DATABASE_URL"), echo=False)
 Base = declarative_base()
+
 
 class TeinfMember(Base):
     __tablename__ = "TeinfMember"
 
     discordId = Column(BigInteger, primary_key=True)
-    money     = Column(Integer)
-    exp       = Column(Integer)
+    money = Column(Integer)
+    exp = Column(Integer)
 
-    def __init__(self, discordId: int, money: int, exp: int):
-        self.discordId = discordId
+    def __init__(self, discord_id: int, money: int, exp: int):
+        self.discordId = discord_id
         self.money = money
         self.exp = exp
 
@@ -27,19 +28,24 @@ class TeinfMember(Base):
 class Tranzakcje(Base):
     __tablename__ = "Tranzakcje"
 
-    id          = Column(Integer, primary_key=True)
-    bilans      = Column(Integer)
-    newBalance  = Column(Integer)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    date = Column(DateTime, default=datetime.now())
+    profit = Column(Integer)
+    balance = Column(Integer)
+
+    def __init__(self, profit: int, balance: int):
+        self.profit = profit
+        self.balance = balance
 
     # Foreign
 
-    discordId   = Column(BigInteger, ForeignKey("TeinfMember.discordId")) 
+    discordId = Column(BigInteger, ForeignKey("TeinfMember.discordId"))
     TeinfMember = relationship("TeinfMember", back_populates="Tranzakcje")
 
     def __repr__(self):
-        return f"<Tranzakcje({id} {TeinfMember.discordId})"
+        return f"<Tranzakcje({self.id}.{self.date}: {self.TeinfMember})"
+
 
 TeinfMember.Tranzakcje = relationship("Tranzakcje", order_by=Tranzakcje.id, back_populates="TeinfMember")
-
 
 Base.metadata.create_all(engine)

@@ -1,5 +1,6 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
+
 
 class TeinfBot(commands.Bot):
     def __init__(self, token: str, extensions):

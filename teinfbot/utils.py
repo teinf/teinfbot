@@ -1,7 +1,6 @@
+from typing import List
+
 import discord
-from discord.ext import commands, tasks
-import random
-from typing import List, Tuple
 
 
 def is_private_channel(channel: discord.TextChannel):

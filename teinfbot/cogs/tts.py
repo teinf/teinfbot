@@ -1,8 +1,11 @@
-from teinfbot.paths import PATH_ASSETS
+import os
+
+import discord
 from discord.ext import commands
 from gtts import gTTS
-import os
-import discord
+
+from teinfbot.paths import PATH_ASSETS
+
 
 class TTS(commands.Cog):
     def __init__(self, bot):
@@ -23,6 +26,7 @@ class TTS(commands.Cog):
             tts.write_to_fp(f)
 
         await ctx.send(file=discord.File(TTS_FILE_PATH))
+
 
 def setup(bot):
     bot.add_cog(TTS(bot))

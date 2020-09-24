@@ -1,10 +1,13 @@
+import asyncio
+import random
+from typing import List
+
 import discord
 from discord.ext import commands
-import asyncio
-from typing import List, Tuple
-import random
-from teinfbot import utils
+
 from teinfbot import db
+from teinfbot import utils
+from teinfbot.models import TeinfMember
 
 
 class RussianRoulette(commands.Cog):
@@ -37,13 +40,13 @@ class RussianRoulette(commands.Cog):
             return -1
 
     @commands.command(name="rr")
-    async def rr(self, ctx: commands.Context, stawka: int):
-        if stawka <= 0:
+    async def rr(self, ctx: commands.Context, BET_AMOUNT: int):
+        if BET_AMOUNT <= 0:
             return
 
         start_embed = discord.Embed(
             title="Rosyjska ruletka",
-            description=f"Czy podejmiesz się wyzwaniu?\nKliknij 🔫 aby dołączyć\n🏁 aby wystartować\nKoszt wstępu: `{stawka}` chillcoinsów",
+            description=f"Czy podejmiesz się wyzwaniu?\nKliknij 🔫 aby dołączyć\n🏁 aby wystartować\nKoszt wstępu: `{BET_AMOUNT}` chillcoinsów",
             color=discord.Color.red()
         )
 
@@ -78,13 +81,14 @@ class RussianRoulette(commands.Cog):
             return
 
         for player in players:
-            money = db.get_member(player.id, "money")
-            if money < stawka:
+            member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=id).first()
+            money = member.money
+            if money < BET_AMOUNT:
                 players.remove(player)
                 await player.member.send(
                     "Niestety nie możesz zagrać w rosyjską ruletkę - masz za mało pieniędzy! - {}".format(money))
             else:
-                db.add_money(player.id, -stawka)
+                member.money -= BET_AMOUNT
 
         if len(players) <= 1:
             return
@@ -155,12 +159,14 @@ class RussianRoulette(commands.Cog):
             color=discord.Color.green()
         )
 
-        money_gained = start_players_amount * stawka
+        money_gained = start_players_amount * BET_AMOUNT
         exp_gained = money_gained // 2
         embed.set_footer(text=f"+{money_gained}cc, +{exp_gained}exp")
         await ctx.send(embed=embed)
-        db.add_money(winning_player.id, money_gained)
-        db.add_exp(winning_player.id, exp_gained)
+
+        winning_player: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=winning_player.id).first()
+        winning_player.money += money_gained
+        winning_player.exp += exp_gained
 
 
 class Gun:

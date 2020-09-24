@@ -1,10 +1,10 @@
 import io
+import random
+
 import aiohttp
 import discord
-import asyncio
-import random
 from bs4 import BeautifulSoup
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 
 class Memes(commands.Cog):

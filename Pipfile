@@ -7,7 +7,6 @@ verify_ssl = true
 
 [packages]
 "discord.py" = "*"
-psycopg2 = "*"
 gtts = "*"
 bs4 = "*"
 sqlalchemy = "*"

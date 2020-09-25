@@ -101,9 +101,9 @@ class Kasyno(commands.Cog):
             author.exp += betWinAmount // 10
             em.add_field(name="**Profit** :", value=f"**+{betWinAmount}** chillcoinsów", inline=False)
 
-
-            em.set_footer(text=str(ctx.author) + f": +{betWinAmount}CC, +{betWinAmount // 10}EXP, BILANS {author.money}",
-                          icon_url=ctx.author.avatar_url)
+            em.set_footer(
+                text=str(ctx.author) + f": +{betWinAmount}CC, +{betWinAmount // 10}EXP, BILANS {author.money}",
+                icon_url=ctx.author.avatar_url)
         else:
             em.set_footer(text=str(ctx.author) + f":BILANS {author.money}", icon_url=ctx.author.avatar_url)
 
@@ -146,7 +146,7 @@ class Kasyno(commands.Cog):
                                   color=discord.Color.green())
 
         author.money += wygrana
-        author.exp += wygrana//5
+        author.exp += wygrana // 5
         embed.set_footer(text=f"Nowy bilans: {author.money}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 

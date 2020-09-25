@@ -6,6 +6,7 @@ from discord.ext import commands, tasks
 from teinfbot import TeinfBot
 from teinfbot.paths import PATH_ASSETS
 
+
 class LoopTasks(commands.Cog):
 
     def __init__(self, bot: TeinfBot):
@@ -18,14 +19,14 @@ class LoopTasks(commands.Cog):
     @tasks.loop(hours=24)
     async def arrow(self):
         teinf = self.bot.get_guild(self.bot.guild_id)
-
         ARROW_ID = 239329824361938944
         user = teinf.get_member(ARROW_ID)
         if not user:
             return
 
-        random_przymiotnik = self.random_row_from_file(os.path.join(PATH_ASSETS, 'przymiotniki.txt'))
-        random_rzeczownik = self.random_row_from_file(os.path.join(PATH_ASSETS, 'rzeczowniki.txt'))
+        RANDOM_NICKNAME_PATH = os.path.join(PATH_ASSETS, "random_nicknames")
+        random_przymiotnik = self.random_row_from_file(os.path.join(RANDOM_NICKNAME_PATH, 'przymiotniki.txt'))
+        random_rzeczownik = self.random_row_from_file(os.path.join(RANDOM_NICKNAME_PATH, 'rzeczowniki.txt'))
         random_nickname = random_przymiotnik + " " + random_rzeczownik
 
         await user.edit(nick=random_nickname)

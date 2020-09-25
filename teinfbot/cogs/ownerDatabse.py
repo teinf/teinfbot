@@ -4,8 +4,8 @@ from typing import List
 import discord
 from discord.ext import commands
 
-from teinfbot.models import TeinfMember, Tranzakcje
 from teinfbot import db
+from teinfbot.models import TeinfMember, Tranzakcje
 
 LEVEL_MULTIPLIER = 0.15
 
@@ -99,7 +99,7 @@ class Kasa(commands.Cog):
     async def daily(self, ctx):
         teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
         level = self.level_from_exp(teinf_member.exp)
-        daily_amount = level * 10
+        daily_amount = (level+1) * 10
         teinf_member.money += daily_amount
 
         embd = discord.Embed(

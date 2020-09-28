@@ -1,11 +1,15 @@
 import os
 import random
+from typing import List
 
+import discord
 from discord.ext import commands, tasks
 
 from teinfbot import TeinfBot
+from teinfbot import db
+from teinfbot.models import TeinfMember
 from teinfbot.paths import PATH_ASSETS
-
+from teinfbot.db_utils import exp_from_level, level_from_exp
 
 class LoopTasks(commands.Cog):
 
@@ -15,6 +19,7 @@ class LoopTasks(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.arrow.start()
+        self.money_over_time.start()
 
     @tasks.loop(hours=24)
     async def arrow(self):
@@ -39,6 +44,24 @@ class LoopTasks(commands.Cog):
         with open(file, "r") as f:
             if not f.closed:
                 return random.choice(f.readlines()).strip()
+
+
+    @tasks.loop(minutes=10)
+    async def money_over_time(self):
+        for channel in self.bot.get_all_channels():
+            AFK_CHANNEL_ID = 423934688244006913
+            members: List[discord.Member] = []
+            if str(channel.type) == "voice" and channel.id != AFK_CHANNEL_ID:
+                for member in channel.members:
+                    members.append(member)
+
+            members_id = [member.id for member in members]
+            teinf_members: List[TeinfMember] = db.session.query(TeinfMember).filter(TeinfMember.discordId.in_(members_id)).all()
+            for teinf_member in teinf_members:
+                LEVEL_MULTIPLIER = 5
+                level = level_from_exp(teinf_member.exp)
+                teinf_member.money += level * LEVEL_MULTIPLIER
+                teinf_member.exp += level * LEVEL_MULTIPLIER
 
 
 def setup(bot):

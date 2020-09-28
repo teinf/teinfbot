@@ -22,3 +22,4 @@ def get_emoji_value(emoji: discord.Emoji) -> int:
 async def add_digits(msg: discord.Message, amount: int):
     for emoji in get_digits(amount):
         await msg.add_reaction(emoji)
+

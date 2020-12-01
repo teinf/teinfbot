@@ -4,6 +4,15 @@ import discord
 from discord.ext import commands
 from teinfbot import db
 from teinfbot.models import TeinfMember
+from datetime import datetime
+
+class MinutesTime:
+    def __init__(self, minutes: int):
+        self.minutes = minutes%60
+        self.hours = minutes//60
+        self.days = self.hours//24
+        self.months = self.hours//30
+        self.years = self.months//12
 
 class UserTools(commands.Cog):
     def __init__(self, bot):
@@ -19,6 +28,7 @@ class UserTools(commands.Cog):
         member = member or ctx.message.author
         await ctx.send(f"{member.avatar_url}")
 
+
     @commands.command()
     async def czas(self, ctx, member: discord.Member = None):
         await ctx.message.delete()
@@ -26,7 +36,14 @@ class UserTools(commands.Cog):
         member = member or ctx.message.author
 
         teinfMember: TeinfMember = db.session.query(TeinfMember).filter_by(discordId = member.id).first()
-        await ctx.send(f"{member.display_name} spędził {teinfMember.timespent // 60:02d}:{teinfMember.timespent%60:02d} na serwerze")
+        minutesFromTime = MinutesTime(teinfMember.timespent)
+
+        em = discord.Embed(
+            title="Czas spędzony na serwerze",
+            description=f"{member.display_name} spędził {minutesFromTime.days} dni, {minutesFromTime.hours} godzin i {minutesFromTime.minutes} minut na serwerze",
+            color=discord.Colour.green()
+        )
+        await ctx.send(embed=em)
 
     @commands.command()
     async def czasTop(self, ctx, amount: int = 5):
@@ -34,6 +51,10 @@ class UserTools(commands.Cog):
 
         topTimeSpentMembers: List[TeinfMember] = db.session.query(TeinfMember).order_by(TeinfMember.timespent).all()
         i = 1
+
+        topkaTitle = "TOP CZASU"
+        topkaDescription = ""
+
         for member in topTimeSpentMembers[::-1]:
             discordMember: discord.Member = self.bot.get_user(member.discordId)
             if not discordMember:
@@ -42,8 +63,17 @@ class UserTools(commands.Cog):
             if i > amount:
                 break
             displayName = discordMember.display_name
-            await ctx.send(f"{i}.{displayName} - {}{member.timespent // 60:02d}:{member.timespent%60:02d}")
+
+            minutesFromTime = MinutesTime(member.timespent)
+            topkaDescription += f"{discordMember.display_name}:{minutesFromTime.days}d, {minutesFromTime.hours}h"
             i+=1
+
+        em = discord.Embed(
+            title=topkaTitle,
+            description=topkaDescription,
+            color=discord.Color.gold()
+        )
+        await ctx.send(embed=em)
 
     @commands.command()
     async def info(self, ctx, member: discord.Member = None):

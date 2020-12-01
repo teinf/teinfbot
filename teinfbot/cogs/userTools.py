@@ -5,18 +5,15 @@ from discord.ext import commands
 from teinfbot import db
 from teinfbot.models import TeinfMember
 from datetime import datetime
-
-class MinutesTime:
-    def __init__(self, minutes: int):
-        self.minutes = minutes%60
-        self.hours = minutes//60
-        self.days = self.hours//24
-        self.months = self.hours//30
-        self.years = self.months//12
+from datetime import timedelta
 
 class UserTools(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    def getTimeInfo(self, minutes: int):
+        delta = timedelta(minutes=minutes)
+        return str(delta).replace("days", "dni")
 
     @commands.command()
     async def avatar(self, ctx, member: discord.Member = None):
@@ -36,11 +33,10 @@ class UserTools(commands.Cog):
         member = member or ctx.message.author
 
         teinfMember: TeinfMember = db.session.query(TeinfMember).filter_by(discordId = member.id).first()
-        minutesFromTime = MinutesTime(teinfMember.timespent)
 
         em = discord.Embed(
             title="Czas spędzony na serwerze",
-            description=f"{member.display_name} spędził {minutesFromTime.days} dni, {minutesFromTime.hours} godzin i {minutesFromTime.minutes} minut na serwerze",
+            description=f"{member.display_name} spędził {self.getTimeInfo(teinfMember.timespent)} na serwerze",
             color=discord.Colour.green()
         )
         await ctx.send(embed=em)
@@ -64,8 +60,7 @@ class UserTools(commands.Cog):
                 break
             displayName = discordMember.display_name
 
-            minutesFromTime = MinutesTime(member.timespent)
-            topkaDescription += f"{i}. {discordMember.display_name}:{minutesFromTime.days}d, {minutesFromTime.hours}h\n"
+            topkaDescription += f"{i}. {discordMember.display_name}\t {self.getTimeInfo(member.timespent)}\n"
             i+=1
 
         em = discord.Embed(

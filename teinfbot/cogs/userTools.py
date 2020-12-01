@@ -65,7 +65,7 @@ class UserTools(commands.Cog):
             displayName = discordMember.display_name
 
             minutesFromTime = MinutesTime(member.timespent)
-            topkaDescription += f"{discordMember.display_name}:{minutesFromTime.days}d, {minutesFromTime.hours}h"
+            topkaDescription += f"{i}. {discordMember.display_name}:{minutesFromTime.days}d, {minutesFromTime.hours}h\n"
             i+=1
 
         em = discord.Embed(

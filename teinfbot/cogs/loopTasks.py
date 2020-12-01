@@ -11,15 +11,19 @@ from teinfbot.models import TeinfMember
 from teinfbot.paths import PATH_ASSETS
 from teinfbot.db_utils import exp_from_level, level_from_exp
 
+
 class LoopTasks(commands.Cog):
 
     def __init__(self, bot: TeinfBot):
         self.bot = bot
+        self.startTasks = False
 
     @commands.Cog.listener()
     async def on_ready(self):
         self.arrow.start()
         self.money_over_time.start()
+        self.addTimeSpent.start()
+        self.startTasks = True
 
     @tasks.loop(hours=24)
     async def arrow(self):
@@ -45,23 +49,38 @@ class LoopTasks(commands.Cog):
             if not f.closed:
                 return random.choice(f.readlines()).strip()
 
-
-    @tasks.loop(minutes=10)
-    async def money_over_time(self):
+    def get_online_members(self) -> List[discord.Member]:
+        members: List[discord.Member] = []
         for channel in self.bot.get_all_channels():
             AFK_CHANNEL_ID = 423934688244006913
-            members: List[discord.Member] = []
             if str(channel.type) == "voice" and channel.id != AFK_CHANNEL_ID:
                 for member in channel.members:
                     members.append(member)
+        return members
 
-            members_id = [member.id for member in members]
-            teinf_members: List[TeinfMember] = db.session.query(TeinfMember).filter(TeinfMember.discordId.in_(members_id)).all()
-            for teinf_member in teinf_members:
-                LEVEL_MULTIPLIER = 5
-                level = level_from_exp(teinf_member.exp)
-                teinf_member.money += level * LEVEL_MULTIPLIER
-                teinf_member.exp += level * LEVEL_MULTIPLIER
+    @tasks.loop(minutes=10)
+    async def money_over_time(self):
+        if not self.startTasks:
+            return
+        onlineMembers = self.get_online_members()
+        onlineMembersIds = [member.id for member in onlineMembers]
+        onlineTeinfMembers: List[TeinfMember] = db.session.query(TeinfMember).filter(
+            TeinfMember.discordId.in_(onlineMembersIds)).all()
+        for onlineTeinfMember in onlineTeinfMembers:
+            LEVEL_MULTIPLIER = 1
+            level = level_from_exp(onlineTeinfMember.exp)
+            onlineTeinfMember.money += level * LEVEL_MULTIPLIER
+            onlineTeinfMember.exp += level * LEVEL_MULTIPLIER
+
+    @tasks.loop(minutes=1)
+    async def addTimeSpent(self):
+        onlineMembers = self.get_online_members()
+        onlineMembersIds = [member.id for member in onlineMembers]
+        onlineTeinfMembers: List[TeinfMember] = db.session.query(TeinfMember).filter(
+            TeinfMember.discordId.in_(onlineMembersIds)).all()
+
+        for onlineTeinfMember in onlineTeinfMembers:
+            onlineTeinfMember.timespent += 1
 
 
 def setup(bot):

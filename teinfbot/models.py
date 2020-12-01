@@ -16,11 +16,13 @@ class TeinfMember(Base):
     discordId = Column(BigInteger, primary_key=True)
     money = Column(Integer)
     exp = Column(Integer)
+    timespent = Column(Integer)
 
-    def __init__(self, discord_id: int, money: int, exp: int):
+    def __init__(self, discord_id: int, money: int, exp: int, timespent: int):
         self.discordId = discord_id
         self.money = money
         self.exp = exp
+        self.timespent = timespent
 
     def __repr__(self):
         return f"<TeinfMember({self.discordId})>"

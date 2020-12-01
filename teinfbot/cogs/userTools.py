@@ -1,6 +1,9 @@
+from typing import List
+
 import discord
 from discord.ext import commands
-
+from teinfbot import db
+from teinfbot.models import TeinfMember
 
 class UserTools(commands.Cog):
     def __init__(self, bot):
@@ -15,6 +18,32 @@ class UserTools(commands.Cog):
 
         member = member or ctx.message.author
         await ctx.send(f"{member.avatar_url}")
+
+    @commands.command()
+    async def czas(self, ctx, member: discord.Member = None):
+        await ctx.message.delete()
+
+        member = member or ctx.message.author
+
+        teinfMember: TeinfMember = db.session.query(TeinfMember).filter_by(discordId = member.id).first()
+        await ctx.send(f"{member.display_name} spędził {teinfMember.timespent // 60:02d}:{teinfMember.timespent%60:02d} na serwerze")
+
+    @commands.command()
+    async def czasTop(self, ctx, amount: int = 5):
+        await ctx.message.delete()
+
+        topTimeSpentMembers: List[TeinfMember] = db.session.query(TeinfMember).order_by(TeinfMember.timespent).all()
+        i = 1
+        for member in topTimeSpentMembers[::-1]:
+            discordMember: discord.Member = self.bot.get_user(member.discordId)
+            if not discordMember:
+                continue
+
+            if i > amount:
+                break
+            displayName = discordMember.display_name
+            await ctx.send(f"{i}.{displayName} - {}{member.timespent // 60:02d}:{member.timespent%60:02d}")
+            i+=1
 
     @commands.command()
     async def info(self, ctx, member: discord.Member = None):

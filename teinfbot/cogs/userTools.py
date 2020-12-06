@@ -13,7 +13,8 @@ class UserTools(commands.Cog):
 
     def getTimeInfo(self, minutes: int):
         delta = timedelta(minutes=minutes)
-        return str(delta).replace("days", "dni")
+        deltaStr = str(delta).replace("days", "dni").replace("day", "dzień")[:-3]
+        return deltaStr
 
     @commands.command()
     async def avatar(self, ctx, member: discord.Member = None):
@@ -52,15 +53,12 @@ class UserTools(commands.Cog):
         topkaDescription = ""
 
         for member in topTimeSpentMembers[::-1]:
-            discordMember: discord.Member = self.bot.get_user(member.discordId)
-            if not discordMember:
-                continue
-
             if i > amount:
                 break
-            displayName = discordMember.display_name
 
-            topkaDescription += f"{i}. {discordMember.display_name}\t {self.getTimeInfo(member.timespent)}\n"
+            mention = f"<@{member.discordId}>"
+
+            topkaDescription += f"{i}. {mention:15} {self.getTimeInfo(member.timespent)}\n"
             i+=1
 
         em = discord.Embed(
@@ -68,6 +66,7 @@ class UserTools(commands.Cog):
             description=topkaDescription,
             color=discord.Color.gold()
         )
+
         await ctx.send(embed=em)
 
     @commands.command()

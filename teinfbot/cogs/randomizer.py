@@ -38,34 +38,32 @@ class Randomizer(commands.Cog):
         await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
 
         # musimy odświeżyć informacje o dodanych reakcjach
-        message = await ctx.get_message(message.id)
+        message = await ctx.fetch_message(message.id)
 
         reaction = message.reactions[0]  # wzięcie 1 reakcji w tym przypadku ✅
 
         # ZAMIANIA reaction.users(): AsyncIterator na reaction.users(): list poprzez flatten()
         users = await reaction.users().flatten()
-        patricipants = [user.name for user in users if user.name != "TEINF"]
+        patricipants = [user.id for user in users if user.name != "TEINF"]
         random.shuffle(patricipants)  # mieszanie listy
 
         teams = []
         for i in range(1, num_of_teams + 1):
             teams.append(patricipants[i - 1::num_of_teams])
 
-        message = await ctx.get_message(message.id)
+        message = await ctx.fetch_message(message.id)
         await message.delete()  # usuwanie wcześniej wysłanych wiadomości
 
-        colors = [discord.Colour.blue, discord.Colour.red, discord.Colour.green,
-                  discord.Colour.orange, discord.Colour.purple, discord.Colour.gold]
-
-        circles = [':large_blue_circle:', ':red_circle:',
-                   ':black_circle:', ':white_circle:']
 
         for i, team in enumerate(teams):
-            color = random.choice(colors)
-            teamStr = ", ".join(team)
-            circle = random.choice(circles)
+            color = discord.Colour.from_rgb(random.randint(0,255), random.randint(0,255), random.randint(0,255))
+
+            teamStr = ""
+            for userNumber, userId in enumerate(team, start=1):
+                teamStr += f"{userNumber}. <@{userId}>\n"
+
             team_embed = discord.Embed(
-                title=f"{circle} TEAM {i + 1} {circle}", description=teamStr, colour=color())
+                title=f"TEAM {i + 1}", description=teamStr, colour=color)
 
             await ctx.send(embed=team_embed)
 

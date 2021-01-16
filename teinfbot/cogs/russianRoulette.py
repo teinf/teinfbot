@@ -6,7 +6,6 @@ import discord
 from discord.ext import commands
 
 from teinfbot import db_session
-from teinfbot import utils
 from teinfbot.models import TeinfMember
 from teinfbot.utils.emojis import EmojiUtils
 

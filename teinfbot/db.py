@@ -1,4 +1,5 @@
 import sqlalchemy.orm
+
 from teinfbot.models import engine
 
 Session = sqlalchemy.orm.sessionmaker(bind=engine, autocommit=True)

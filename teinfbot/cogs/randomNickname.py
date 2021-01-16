@@ -39,3 +39,7 @@ class RandomNickname(commands.Cog):
 
             channel = teinf.get_channel(RANDOM_NICKNAME_CHANNEL_ID)
             await channel.send(f"ARROW: {random_nickname}")
+
+
+def setup(bot):
+    bot.add_cog(RandomNickname(bot))

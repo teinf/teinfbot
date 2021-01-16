@@ -8,6 +8,7 @@ class TeinfBot(commands.Bot):
     def __init__(self, token: str, extensions):
         super().__init__(
             command_prefix=".",
+            intents=discord.Intents.all(),
             reconnect=True,
         )
 

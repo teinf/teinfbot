@@ -1,9 +1,11 @@
-import discord
 from typing import List
+
+import discord
+
 from teinfbot import TeinfBot
 
-class MembersUtils:
 
+class MembersUtils:
     AFK_CHANNEL_ID = 423934688244006913
 
     @staticmethod

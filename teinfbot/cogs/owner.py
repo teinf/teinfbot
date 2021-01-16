@@ -4,7 +4,7 @@ from discord.ext import commands
 import discord
 
 from teinfbot import TeinfBot
-from teinfbot.paths import PATH_COGS
+from teinfbot.paths import COGS_PATH
 from teinfbot import db_session
 from teinfbot.models import TeinfMember, Tranzakcje
 from teinfbot.utils.levels import LevelsUtils
@@ -29,7 +29,7 @@ class Owner(commands.Cog):
         if extension:
             await self.reload_extension(ctx, extension)
         else:
-            extensions = [cog.split(".")[0] for cog in os.listdir(PATH_COGS) if cog.endswith(".py")]
+            extensions = [cog.split(".")[0] for cog in os.listdir(COGS_PATH) if cog.endswith(".py")]
             for extension in extensions:
                 await self.reload_extension(ctx, extension)
 

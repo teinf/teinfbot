@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 from gtts import gTTS
 
-from teinfbot.paths import PATH_ASSETS
+from teinfbot.paths import ASSETS_PATH
 
 
 @commands.command()
@@ -13,7 +13,7 @@ async def say(ctx, language, *textToSay):
     await ctx.message.delete()
 
     TTS_FILE_NAME = 'music.mp3'
-    TTS_FILE_PATH = os.path.join(PATH_ASSETS, 'gtts', TTS_FILE_NAME)
+    TTS_FILE_PATH = os.path.join(ASSETS_PATH, 'gtts', TTS_FILE_NAME)
 
     textToSay = " ".join(textToSay)
 

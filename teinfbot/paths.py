@@ -1,6 +1,6 @@
-from os import path
+import os
 
-PATH_ASSETS = path.join('teinfbot', 'assets')
-COMMANDS_PATH = path.join('teinfbot', 'commands')
-TASKS_PATH = path.join('teinfbot', 'tasks')
-PATH_COGS = path.join('teinfbot', 'cogs')
+ASSETS_PATH = os.path.join('teinfbot', 'assets')
+COMMANDS_PATH = os.path.join('teinfbot', 'commands')
+TASKS_PATH = os.path.join('teinfbot', 'tasks')
+COGS_PATH = os.path.join('teinfbot', 'cogs')

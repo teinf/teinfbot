@@ -1,4 +1,3 @@
-import math
 from typing import List
 
 import discord
@@ -6,6 +5,7 @@ from discord.ext import commands
 
 from teinfbot import db_session
 from teinfbot.models import TeinfMember, Tranzakcje
+from teinfbot.utils.levels import LevelsUtils
 
 LEVEL_MULTIPLIER = 0.15
 
@@ -65,23 +65,12 @@ class Kasa(commands.Cog):
             transactionStr += f"{transaction.date}: P:{transaction.profit} B: {transaction.balance}\n"
         await ctx.channel.send(transactionStr)
 
-    @staticmethod
-    def level_from_exp(exp: int):
-        if exp == 0:
-            return 0
-
-        return int(LEVEL_MULTIPLIER * math.sqrt(exp))
-
-    @staticmethod
-    def exp_from_level(level: int):
-        return int(level * level * (1 / LEVEL_MULTIPLIER) * (1 / LEVEL_MULTIPLIER))
-
     @commands.command()
     async def level(self, ctx: commands.Context, member: discord.Member = None):
         member = member or ctx.author
         teinf_member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=member.id).first()
-        level = self.level_from_exp(teinf_member.exp)
-        next_level_exp = self.exp_from_level(level + 1)
+        level = LevelsUtils.levelFromExp(teinf_member.exp)
+        next_level_exp = LevelsUtils.expFromLevel(level + 1)
         missing_exp_to_lvlup = next_level_exp - teinf_member.exp
 
         embed = discord.Embed(
@@ -98,7 +87,7 @@ class Kasa(commands.Cog):
     @commands.cooldown(1, 86400, commands.BucketType.user)
     async def daily(self, ctx):
         teinf_member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
-        level = self.level_from_exp(teinf_member.exp)
+        level = LevelsUtils.levelFromExp(teinf_member.exp)
         daily_amount = (level + 1) * 10
         teinf_member.money += daily_amount
 

@@ -8,6 +8,7 @@ from discord.ext import commands
 from teinfbot import db_session
 from teinfbot import utils
 from teinfbot.models import TeinfMember
+from teinfbot.utils.emojis import EmojiUtils
 
 
 class RussianRoulette(commands.Cog):
@@ -28,7 +29,7 @@ class RussianRoulette(commands.Cog):
                 timeout=30
             )
 
-            kill_decision = utils.get_emoji_value(reaction.emoji)
+            kill_decision = EmojiUtils.get_emoji_value(reaction.emoji)
             return kill_decision
         except asyncio.TimeoutError:
             # Gdy nie zdąży dodać reakcji - 30 sekund
@@ -108,7 +109,7 @@ class RussianRoulette(commands.Cog):
                 embed.set_footer(text=f"{str(player.member)}", icon_url=player.member.avatar_url)
 
                 msg = await ctx.send(embed=embed, delete_after=20)
-                await utils.add_digits(msg, 2)
+                await EmojiUtils.add_digits(msg, 2)
 
                 kill_decision = await self.handle_reactions(ctx, msg, player.member)
 
@@ -130,7 +131,7 @@ class RussianRoulette(commands.Cog):
                         color=discord.Color.green()
                     ))
 
-                    await utils.add_digits(message, len(players))
+                    await EmojiUtils.add_digits(message, len(players))
                     response = await self.handle_reactions(ctx, message, player.member)
 
                     target = players[response - 1]

@@ -1,6 +1,8 @@
-from discord.ext import commands
-import discord
 import random
+
+import discord
+from discord.ext import commands
+
 
 @commands.command(name="lt")
 @commands.cooldown(1, 60, commands.BucketType.default)

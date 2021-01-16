@@ -1,8 +1,10 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
+
 from teinfbot import db_session
 from teinfbot.models import TeinfMember
 from teinfbot.utils.levels import LevelsUtils
+
 
 @commands.command()
 async def level(ctx: commands.Context, member: discord.Member = None):

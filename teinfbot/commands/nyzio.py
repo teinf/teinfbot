@@ -1,6 +1,7 @@
-from discord.ext import commands
 import random
 import string
+
+from discord.ext import commands
 
 
 @commands.command()

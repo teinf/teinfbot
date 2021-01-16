@@ -1,5 +1,6 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
+
 
 @commands.command()
 async def avatar(ctx: commands.Context, member: discord.Member = None):

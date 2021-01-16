@@ -1,9 +1,10 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
 
-from teinfbot.models import TeinfMember
 from teinfbot import db_session
+from teinfbot.models import TeinfMember
 from teinfbot.utils.levels import LevelsUtils
+
 
 @commands.command()
 @commands.cooldown(1, 86400, commands.BucketType.user)
@@ -25,5 +26,7 @@ async def daily(ctx):
 @daily.error
 async def daily_error(ctx, error):
     await ctx.author.send(error)
+
+
 def setup(bot):
     bot.add_command(daily)

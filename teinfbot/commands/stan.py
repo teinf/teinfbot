@@ -1,8 +1,8 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
 
-from teinfbot.models import TeinfMember
 from teinfbot import db_session
+from teinfbot.models import TeinfMember
 
 
 @commands.command()

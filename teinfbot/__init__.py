@@ -4,6 +4,7 @@ from teinfbot.db import db_session
 from teinfbot.bot import TeinfBot
 from teinfbot.paths import PATH_COGS
 from teinfbot.paths import COMMANDS_PATH
+from teinfbot.paths import *
 
 EXTENSIONS = []
 
@@ -16,6 +17,11 @@ COMMANDS = [command.split(".")[0] for command in os.listdir(COMMANDS_PATH) if co
 COMMANDS_PREFIX = "teinfbot.commands."
 for command in COMMANDS:
     EXTENSIONS.append(COMMANDS_PREFIX + command)
+
+TASKS = [task.split(".")[0] for task in os.listdir(TASKS_PATH) if task.endswith(".py")]
+TASKS_PREFIX = "teinfbot.tasks."
+for task in TASKS:
+    EXTENSIONS.append(TASKS_PREFIX + task)
 
 token = os.environ.get("ACCESS_TOKEN")
 

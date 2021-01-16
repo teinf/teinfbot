@@ -1,8 +1,10 @@
-from discord.ext import commands
-import discord
 import random
-from teinfbot.models import TeinfMember
+
+import discord
+from discord.ext import commands
+
 from teinfbot import db_session
+from teinfbot.models import TeinfMember
 
 
 @commands.cooldown(3, 60, commands.BucketType.user)

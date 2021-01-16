@@ -1,10 +1,12 @@
-from discord.ext import commands
 from typing import List
-from teinfbot.models import TeinfMember
-from teinfbot import db_session
-import discord
 
+import discord
+from discord.ext import commands
+
+from teinfbot import db_session
+from teinfbot.models import TeinfMember
 from teinfbot.utils.time import TimeUtils
+
 
 @commands.command()
 async def topka(ctx, amount: int = 10):

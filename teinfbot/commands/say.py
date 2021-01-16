@@ -1,10 +1,11 @@
-from discord.ext import commands
-import discord
 import os
 
+import discord
+from discord.ext import commands
 from gtts import gTTS
 
 from teinfbot.paths import PATH_ASSETS
+
 
 @commands.command()
 async def say(ctx, language, *textToSay):

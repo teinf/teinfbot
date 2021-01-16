@@ -1,9 +1,11 @@
-from discord.ext import commands
-import discord
-from teinfbot.models import TeinfMember
-from teinfbot import db_session
 import random
-from teinfbot import TeinfBot
+
+import discord
+from discord.ext import commands
+
+from teinfbot import db_session
+from teinfbot.models import TeinfMember
+
 
 @commands.command()
 async def ruletka(ctx: commands.Context, bet: int):
@@ -86,6 +88,7 @@ async def ruletka(ctx: commands.Context, bet: int):
 
     await ctx.send(embed=em)
 
+
 @commands.command()
 async def ruletka_help(ctx):
     em = discord.Embed(title="\U0001F4B0 Ruletka", description="", color=discord.Colour.gold())
@@ -101,6 +104,7 @@ async def ruletka_help(ctx):
                  inline=True)
     em.add_field(name="Użycie", value=".ruletka **<bet>**")
     await ctx.send(embed=em)
+
 
 def setup(bot):
     bot.add_command(ruletka)

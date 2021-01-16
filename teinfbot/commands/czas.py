@@ -1,5 +1,6 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
+
 from teinfbot import db_session
 from teinfbot.models import TeinfMember
 from teinfbot.utils.time import TimeUtils

@@ -63,11 +63,6 @@ class Memes(commands.Cog):
     async def mem(self, ctx):
         await ctx.channel.send(embed=await self.get_meme_embed(await self.get_meme()))
 
-    # @commands.command()
-    # async def strona_memow(self, ctx):
-    #     for meme in await self.get_meme(full_page=True):
-    #         await ctx.channel.send(embed=await self.get_meme_embed(meme))
-
     @commands.command()
     async def nowy_mem(self, ctx):
         await ctx.channel.send(embed=await self.get_meme_embed(await self.get_meme(first_page=True)))

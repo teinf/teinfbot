@@ -4,7 +4,7 @@ from typing import List
 import discord
 from discord.ext import commands
 
-from teinfbot import db
+from teinfbot import db_session
 from teinfbot.models import TeinfMember, Tranzakcje
 
 LEVEL_MULTIPLIER = 0.15
@@ -17,7 +17,7 @@ class Kasa(commands.Cog):
     @commands.is_owner()
     @commands.command()
     async def add_money(self, ctx, member: discord.Member, amount: int):
-        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
+        teinf_member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=member.id).first()
         teinf_member.money += amount
 
         embd = discord.Embed(
@@ -30,7 +30,7 @@ class Kasa(commands.Cog):
     @commands.is_owner()
     @commands.command()
     async def add_exp(self, ctx, member: discord.Member, amount: int):
-        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
+        teinf_member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=member.id).first()
         teinf_member.money += amount
 
         embd = discord.Embed(
@@ -44,7 +44,7 @@ class Kasa(commands.Cog):
     async def stan(self, ctx, member: discord.Member = None):
         if member is None:
             member = ctx.author
-        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
+        teinf_member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=member.id).first()
 
         embd = discord.Embed(
             title="💵  TEINF BANK  💵",
@@ -58,7 +58,7 @@ class Kasa(commands.Cog):
     async def tranzakcje(self, ctx, member: discord.Member = None):
         if member is None:
             member = ctx.author
-        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
+        teinf_member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=member.id).first()
         transactionStr = ""
         transactions: List[Tranzakcje] = teinf_member.Tranzakcje
         for transaction in transactions:
@@ -79,7 +79,7 @@ class Kasa(commands.Cog):
     @commands.command()
     async def level(self, ctx: commands.Context, member: discord.Member = None):
         member = member or ctx.author
-        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=member.id).first()
+        teinf_member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=member.id).first()
         level = self.level_from_exp(teinf_member.exp)
         next_level_exp = self.exp_from_level(level + 1)
         missing_exp_to_lvlup = next_level_exp - teinf_member.exp
@@ -97,9 +97,9 @@ class Kasa(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 86400, commands.BucketType.user)
     async def daily(self, ctx):
-        teinf_member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
+        teinf_member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
         level = self.level_from_exp(teinf_member.exp)
-        daily_amount = (level+1) * 10
+        daily_amount = (level + 1) * 10
         teinf_member.money += daily_amount
 
         embd = discord.Embed(

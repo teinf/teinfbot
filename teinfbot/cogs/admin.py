@@ -1,8 +1,7 @@
-from typing import List
-
 from discord.ext import commands
-from teinfbot import db
+
 from teinfbot import TeinfBot
+from teinfbot import db_session
 from teinfbot.models import TeinfMember
 
 
@@ -18,7 +17,7 @@ class Admin(commands.Cog):
         for member in self.bot.get_all_members():
             STARTING_MONEY = 300
             tm = TeinfMember(int(member.id), STARTING_MONEY, 0)
-            db.session.add(tm)
+            db_session.add(tm)
             if add_confirmation:
                 print(f"Dodano {member.name}")
 

@@ -54,9 +54,8 @@ class Randomizer(commands.Cog):
         message = await ctx.fetch_message(message.id)
         await message.delete()  # usuwanie wcześniej wysłanych wiadomości
 
-
         for i, team in enumerate(teams):
-            color = discord.Colour.from_rgb(random.randint(0,255), random.randint(0,255), random.randint(0,255))
+            color = discord.Colour.from_rgb(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
             teamStr = ""
             for userNumber, userId in enumerate(team, start=1):

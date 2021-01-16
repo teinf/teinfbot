@@ -5,7 +5,7 @@ from typing import List
 import discord
 from discord.ext import commands
 
-from teinfbot import db
+from teinfbot import db_session
 from teinfbot import utils
 from teinfbot.models import TeinfMember
 
@@ -81,7 +81,7 @@ class RussianRoulette(commands.Cog):
             return
 
         for player in players:
-            member: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=player.id).first()
+            member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=player.id).first()
             money = member.money
             if money < BET_AMOUNT:
                 players.remove(player)
@@ -164,7 +164,7 @@ class RussianRoulette(commands.Cog):
         embed.set_footer(text=f"+{money_gained}cc, +{exp_gained}exp")
         await ctx.send(embed=embed)
 
-        winning_player: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=winning_player.id).first()
+        winning_player: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=winning_player.id).first()
         winning_player.money += money_gained
         winning_player.exp += exp_gained
 

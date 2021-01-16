@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+from teinfbot import db_session
+
 
 class TeinfBot(commands.Bot):
     def __init__(self, token: str, extensions):
@@ -32,7 +34,8 @@ class TeinfBot(commands.Bot):
 
     async def bot_close(self):
         await super().logout()
+        db_session.close()
 
     async def on_ready(self):
         print(
-            f'\nZalogowano jako : {self.user} - {self.user.id}\nWersja: {discord.__version__}\n')
+            f'\nLogged as : {self.user} - {self.user.id}\nVersion: {discord.__version__}\n')

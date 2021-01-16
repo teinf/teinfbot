@@ -6,10 +6,10 @@ import discord
 from discord.ext import commands, tasks
 
 from teinfbot import TeinfBot
-from teinfbot import db
+from teinfbot import db_session
+from teinfbot.db_utils import level_from_exp
 from teinfbot.models import TeinfMember
 from teinfbot.paths import PATH_ASSETS
-from teinfbot.db_utils import exp_from_level, level_from_exp
 
 
 class LoopTasks(commands.Cog):
@@ -64,7 +64,7 @@ class LoopTasks(commands.Cog):
             return
         onlineMembers = self.get_online_members()
         onlineMembersIds = [member.id for member in onlineMembers]
-        onlineTeinfMembers: List[TeinfMember] = db.session.query(TeinfMember).filter(
+        onlineTeinfMembers: List[TeinfMember] = db_session.query(TeinfMember).filter(
             TeinfMember.discordId.in_(onlineMembersIds)).all()
         for onlineTeinfMember in onlineTeinfMembers:
             LEVEL_MULTIPLIER = 1
@@ -76,7 +76,7 @@ class LoopTasks(commands.Cog):
     async def addTimeSpent(self):
         onlineMembers = self.get_online_members()
         onlineMembersIds = [member.id for member in onlineMembers]
-        onlineTeinfMembers: List[TeinfMember] = db.session.query(TeinfMember).filter(
+        onlineTeinfMembers: List[TeinfMember] = db_session.query(TeinfMember).filter(
             TeinfMember.discordId.in_(onlineMembersIds)).all()
 
         for onlineTeinfMember in onlineTeinfMembers:

@@ -1,12 +1,8 @@
-from datetime import datetime
+import sqlalchemy.orm
+from teinfbot.models import engine
 
-from sqlalchemy import event
-from sqlalchemy.orm import sessionmaker
-
-from teinfbot.models import engine, TeinfMember, Tranzakcje
-
-Session = sessionmaker(bind=engine, autocommit=True)
-session = Session()
+Session = sqlalchemy.orm.sessionmaker(bind=engine, autocommit=True)
+db_session: sqlalchemy.orm.Session = Session()
 
 # Podczas tworzenia bazy danych zakomentować
 # @event.listens_for(TeinfMember.money, 'set', propagate=True)

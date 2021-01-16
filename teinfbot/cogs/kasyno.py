@@ -3,7 +3,7 @@ import random
 import discord
 from discord.ext import commands
 
-from teinfbot import db
+from teinfbot import db_session
 from teinfbot.models import TeinfMember
 
 
@@ -33,7 +33,7 @@ class Kasyno(commands.Cog):
         if bet <= 0:
             return
 
-        author: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
+        author: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
 
         if author.money < bet:
             await ctx.author.send(f"Nie masz wystarczająco pieniędzy - brakuje `{abs(bet - author.money)}` chillcoinów")
@@ -117,7 +117,7 @@ class Kasyno(commands.Cog):
     @commands.command()
     async def zdrapka(self, ctx):
         """ KOSZT ZDRAPKI 10 chillcoinów """
-        author: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
+        author: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
 
         ZDRAPKA_COST = 5
 
@@ -169,7 +169,7 @@ class Kasyno(commands.Cog):
         wygrana = random.choices(list(wygrane.keys()), weights=list(wygrane.values()))
         wygrana = wygrana[0]
 
-        author: TeinfMember = db.session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
+        author: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=ctx.author.id).first()
         author.money += wygrana
 
         if wygrana == 0:

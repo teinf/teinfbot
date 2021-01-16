@@ -1,8 +1,10 @@
 import os
 
 from discord.ext import commands
+
 from teinfbot import TeinfBot
 from teinfbot.paths import PATH_COGS
+
 
 class Owner(commands.Cog):
     def __init__(self, bot: TeinfBot):
@@ -25,8 +27,6 @@ class Owner(commands.Cog):
             extensions = [cog.split(".")[0] for cog in os.listdir(PATH_COGS) if cog.endswith(".py")]
             for extension in extensions:
                 await self.reload_extension(ctx, extension)
-
-
 
 
 def setup(bot):

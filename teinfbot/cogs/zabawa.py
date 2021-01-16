@@ -13,7 +13,7 @@ class Zabawa(commands.Cog):
         kutas_len = random.randint(1, 30)
         if kutas_len < 10:
             em = discord.Embed(
-                title="YELLO DIK",
+                title="YELLOW DIK",
                 description=f"{ctx.author.name} twój mały ma {kutas_len} cm! Współczuję Ci :(",
                 colour=discord.Color.gold()
             )

@@ -1,11 +1,12 @@
+from datetime import timedelta
 from typing import List
 
 import discord
 from discord.ext import commands
-from teinfbot import db
+
+from teinfbot import db_session
 from teinfbot.models import TeinfMember
-from datetime import datetime
-from datetime import timedelta
+
 
 class UserTools(commands.Cog):
     def __init__(self, bot):
@@ -26,14 +27,13 @@ class UserTools(commands.Cog):
         member = member or ctx.message.author
         await ctx.send(f"{member.avatar_url}")
 
-
     @commands.command()
     async def czas(self, ctx, member: discord.Member = None):
         await ctx.message.delete()
 
         member = member or ctx.message.author
 
-        teinfMember: TeinfMember = db.session.query(TeinfMember).filter_by(discordId = member.id).first()
+        teinfMember: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=member.id).first()
 
         em = discord.Embed(
             title="Czas spędzony na serwerze",
@@ -46,7 +46,7 @@ class UserTools(commands.Cog):
     async def czasTop(self, ctx, amount: int = 5):
         await ctx.message.delete()
 
-        topTimeSpentMembers: List[TeinfMember] = db.session.query(TeinfMember).order_by(TeinfMember.timespent).all()
+        topTimeSpentMembers: List[TeinfMember] = db_session.query(TeinfMember).order_by(TeinfMember.timespent).all()
         i = 1
 
         topkaTitle = "TOP CZASU"
@@ -59,7 +59,7 @@ class UserTools(commands.Cog):
             mention = f"<@{member.discordId}>"
 
             topkaDescription += f"{i}. {mention:15} {self.getTimeInfo(member.timespent)}\n"
-            i+=1
+            i += 1
 
         em = discord.Embed(
             title=topkaTitle,

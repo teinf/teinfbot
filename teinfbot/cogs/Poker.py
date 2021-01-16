@@ -1,12 +1,13 @@
 import asyncio
-
-from discord.ext import commands
-import discord
-from teinfbot import db
-from teinfbot import TeinfBot
-from teinfbot.models import TeinfMember
-from typing import List
 import random
+from typing import List
+
+import discord
+from discord.ext import commands
+
+from teinfbot import TeinfBot
+from teinfbot import db_session
+from teinfbot.models import TeinfMember
 
 
 class Poker(commands.Cog):
@@ -39,14 +40,15 @@ class Poker(commands.Cog):
 
         return True
 
-    async def get_users_by_emoji_from_message(self, ctx: commands.Context, message: discord.Message, emoji: str) -> List[discord.Member]:
+    async def get_users_by_emoji_from_message(self, ctx: commands.Context, message: discord.Message, emoji: str) -> \
+            List[discord.Member]:
 
         message = await ctx.fetch_message(message.id)
         reactions: List[discord.Reaction] = message.reactions
         reaction_emoji = [reaction for reaction in reactions if reaction.emoji == emoji][0]
 
         users = [user for user in await reaction_emoji.users().flatten() if
-                                 user.display_name != self.bot.user.display_name]
+                 user.display_name != self.bot.user.display_name]
 
         return users
 
@@ -85,9 +87,6 @@ class Poker(commands.Cog):
             # Proszenie o bet, raise, fold
             for player in players:
                 choice_message = await ctx.channel.send(f"Obecny bet `{current_bet}`\n1.")
-
-
-
 
 
 class Card:
@@ -131,12 +130,14 @@ class Deck:
     def shuffle_deck(self):
         random.shuffle(self.cards)
 
+
 class PokerPlayer:
     def __init__(self, discordMember: discord.Member, firstCard, secondCard):
         self.secondCard = secondCard
         self.firstCard = firstCard
         self.discordMember = discordMember
-        self.TeinfMember = db.session.query(TeinfMember).filter_by(discordId=discordMember.id).first()
+        self.TeinfMember = db_session.query(TeinfMember).filter_by(discordId=discordMember.id).first()
+
 
 def setup(bot):
     bot.add_cog(Poker(bot))

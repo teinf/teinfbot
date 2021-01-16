@@ -10,4 +10,4 @@ class LevelsUtils:
 
     @staticmethod
     def expFromLevel(level: int):
-        return (level**2)//(LevelsUtils.LEVEL_MULTIPLIER ** 2)
+        return (level ** 2) // (LevelsUtils.LEVEL_MULTIPLIER ** 2)

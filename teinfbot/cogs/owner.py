@@ -1,14 +1,12 @@
 import os
 
-from discord.ext import commands
 import discord
+from discord.ext import commands
 
-from teinfbot import TeinfBot
+from teinfbot.bot import TeinfBot
+from teinfbot.db import db_session
+from teinfbot.models import TeinfMember
 from teinfbot.paths import COGS_PATH
-from teinfbot import db_session
-from teinfbot.models import TeinfMember, Tranzakcje
-from teinfbot.utils.levels import LevelsUtils
-
 
 
 class Owner(commands.Cog):

@@ -1,6 +1,6 @@
-from discord.ext import commands, tasks
-from teinfbot import TeinfBot
-import asyncio
+from discord.ext import tasks
+
+from teinfbot.bot import TeinfBot
 
 
 async def taskStarter(bot: TeinfBot):

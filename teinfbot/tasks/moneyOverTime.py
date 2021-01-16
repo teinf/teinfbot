@@ -1,9 +1,9 @@
 from typing import List
 
-from discord.ext import commands, tasks
-from teinfbot import TeinfBot, db_session
-import asyncio
+from discord.ext import tasks
 
+from teinfbot.bot import TeinfBot
+from teinfbot.db import db_session
 from teinfbot.models import TeinfMember
 from teinfbot.utils.levels import LevelsUtils
 from teinfbot.utils.members import MembersUtils

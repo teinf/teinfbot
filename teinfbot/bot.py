@@ -1,11 +1,12 @@
 import discord
 from discord.ext import commands
 
-from teinfbot import db_session
+from teinfbot.db import db_session
+from teinfbot.paths import *
 
 
 class TeinfBot(commands.Bot):
-    def __init__(self, token: str, extensions):
+    def __init__(self):
         super().__init__(
             command_prefix=".",
             intents=discord.Intents.all(),
@@ -13,8 +14,6 @@ class TeinfBot(commands.Bot):
         )
 
         self.guild_id = 406476256646004736
-        self.exts = extensions
-        self.token = token
 
     def run(self):
         try:
@@ -23,14 +22,30 @@ class TeinfBot(commands.Bot):
             self.loop.run_until_complete(self.bot_close())
 
     async def bot_start(self):
-        for extension in self.exts:
+        self.retrieve_extensions()
+        token = os.environ.get("ACCESS_TOKEN")
+        await self.login(token)
+        await self.connect()
+
+    def retrieve_extensions(self):
+        EXTENSIONS = []
+
+        def addExtensionDirectory(path, prefix):
+            EXTS = [ext.split(".")[0] for ext in os.listdir(path) if ext.endswith(".py")]
+            for ext in EXTS:
+                EXTENSIONS.append(prefix + ext)
+
+        addExtensionDirectory(COGS_PATH, "teinfbot.cogs.")
+        addExtensionDirectory(COMMANDS_PATH, "teinfbot.commands.")
+        addExtensionDirectory(TASKS_PATH, "teinfbot.tasks.")
+
+        for extension in EXTENSIONS:
+            print(extension)
             try:
                 self.load_extension(extension)
                 print(f"[EXT] Success - {extension}")
             except commands.ExtensionNotFound:
                 print(f"[EXT] Failed - {extension}")
-        await self.login(self.token)
-        await self.connect()
 
     async def bot_close(self):
         await super().logout()

@@ -1,4 +1,5 @@
-from teinfbot import bot
+from teinfbot.bot import TeinfBot
 
 if __name__ == "__main__":
-    bot.run()
+    tfbot = TeinfBot()
+    tfbot.run()

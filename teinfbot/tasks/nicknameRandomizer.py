@@ -1,9 +1,9 @@
 import os
 from typing import Tuple
 
-from discord.ext import commands, tasks
+from discord.ext import tasks
 
-from teinfbot import TeinfBot
+from teinfbot.bot import TeinfBot
 from teinfbot.paths import ASSETS_PATH
 from teinfbot.utils.files import FileUtils
 

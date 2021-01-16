@@ -2,7 +2,7 @@ from typing import List
 
 import discord
 
-from teinfbot import TeinfBot
+from teinfbot.bot import TeinfBot
 
 
 class MembersUtils:

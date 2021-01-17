@@ -9,9 +9,9 @@ autopep8 = "*"
 [packages]
 "discord.py" = "*"
 gtts = "*"
-bs4 = "*"
 sqlalchemy = "*"
 psycopg2 = "*"
+beautifulsoup4 = "*"
 
 [requires]
-python_version = "3.9.1"
+python_version = "3.9"

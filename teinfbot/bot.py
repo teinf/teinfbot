@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import colorama
 
 from teinfbot.db import db_session
 from teinfbot.paths import *
@@ -28,24 +29,25 @@ class TeinfBot(commands.Bot):
         await self.connect()
 
     def retrieve_extensions(self):
-        EXTENSIONS = []
-
-        def addExtensionDirectory(path, prefix):
+        def addExtension(path, prefix):
             EXTS = [ext.split(".")[0] for ext in os.listdir(path) if ext.endswith(".py")]
+            print(colorama.Fore.BLUE + "\n" + f"=== LOADING {prefix.upper()} ===" + "\n")
             for ext in EXTS:
-                EXTENSIONS.append(prefix + ext)
+                try:
+                    ext_fullname = "teinfbot." + prefix + "." + ext
+                    self.load_extension(ext_fullname)
+                    print(f"{colorama.Fore.GREEN}[{prefix.upper()}] Success - {ext}")
+                except commands.ExtensionNotFound:
+                    print(f"{colorama.Fore.RED}[{prefix.upper()}] Failed - {ext}")
 
-        addExtensionDirectory(COGS_PATH, "teinfbot.cogs.")
-        addExtensionDirectory(COMMANDS_PATH, "teinfbot.commands.")
-        addExtensionDirectory(TASKS_PATH, "teinfbot.tasks.")
+            print(colorama.Style.RESET_ALL)
 
-        for extension in EXTENSIONS:
-            print(extension)
-            try:
-                self.load_extension(extension)
-                print(f"[EXT] Success - {extension}")
-            except commands.ExtensionNotFound:
-                print(f"[EXT] Failed - {extension}")
+        addExtension(COGS_PATH, "cogs")
+        addExtension(COMMANDS_PATH, "commands")
+        addExtension(TASKS_PATH, "tasks")
+        addExtension(EVENTS_PATH, "events")
+
+        print(colorama.Style.RESET_ALL)
 
     async def bot_close(self):
         await super().logout()

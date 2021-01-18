@@ -12,6 +12,7 @@ gtts = "*"
 sqlalchemy = "*"
 psycopg2 = "*"
 beautifulsoup4 = "*"
+colorama = "*"
 
 [requires]
 python_version = "3.9"

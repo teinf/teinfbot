@@ -14,15 +14,17 @@ class TeinfMember(Base):
     __tablename__ = "TeinfMember"
 
     discordId = Column(BigInteger, primary_key=True)
-    money = Column(Integer)
-    exp = Column(Integer)
-    timespent = Column(Integer)
+    money = Column(Integer, default=300)
+    exp = Column(Integer, default=0)
+    timespent = Column(Integer, default=0)
+    sentmessages = Column(Integer, default=0)
 
-    def __init__(self, discord_id: int, money: int, exp: int, timespent: int):
+    def __init__(self, discord_id: int, money: int, exp: int, timespent: int, sentmessages: int):
         self.discordId = discord_id
         self.money = money
         self.exp = exp
         self.timespent = timespent
+        self.sentmessages = sentmessages
 
     def __repr__(self):
         return f"<TeinfMember({self.discordId})>"

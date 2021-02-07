@@ -6,7 +6,7 @@ def pierwiastek(n):
     dzielniki = {}
 
     while n > 1:
-        for i in range(2, n+1):
+        for i in range(2, n + 1):
             if n % i == 0:
                 n //= i
                 if dzielniki.get(i):
@@ -20,8 +20,8 @@ def pierwiastek(n):
     prawaStrona = 1
 
     for dzielnik in dzielniki:
-        lewaStrona *= (dzielnik ** (dzielniki[dzielnik]//2))
-        prawaStrona *= (dzielnik ** (dzielniki[dzielnik]%2))
+        lewaStrona *= (dzielnik ** (dzielniki[dzielnik] // 2))
+        prawaStrona *= (dzielnik ** (dzielniki[dzielnik] % 2))
 
     znakPierwiastka = u"\u221a"
     if prawaStrona != 1:
@@ -39,3 +39,5 @@ async def pierwiastek(ctx: commands.Context, *args):
         await ctx.send(msg)
 
 
+def setup(bot):
+    bot.add_command(pierwiastek)

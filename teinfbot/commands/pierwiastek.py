@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 
-def pierwiastek(n):
+def rozklad(n):
     dzielniki = {}
 
     while n > 1:
@@ -24,10 +24,12 @@ def pierwiastek(n):
         prawaStrona *= (dzielnik ** (dzielniki[dzielnik] % 2))
 
     znakPierwiastka = u"\u221a"
-    if prawaStrona != 1:
-        return str(lewaStrona) + znakPierwiastka + str(prawaStrona)
-    else:
+    if lewaStrona == 1:
+        return znakPierwiastka + str(prawaStrona)
+    elif prawaStrona == 1:
         return str(lewaStrona)
+    else:
+        return str(lewaStrona) + znakPierwiastka + str(prawaStrona)
 
 
 @commands.command()
@@ -35,7 +37,7 @@ async def pierwiastek(ctx: commands.Context, *args):
     if len(args) == 0:
         await ctx.send("Musisz podać liczbę! : .pierwiastek <liczba> <liczba2> ...")
     else:
-        msg = " ".join((pierwiastek(int(arg)) for arg in args if int(arg) >= 0))
+        msg = "\n".join((arg + ": " + (rozklad(int(arg))) for arg in args if int(arg) >= 0))
         await ctx.send(msg)
 
 

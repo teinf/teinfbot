@@ -1,5 +1,5 @@
 import discord
-
+from typing import List
 
 class ChannelUtils:
     @staticmethod

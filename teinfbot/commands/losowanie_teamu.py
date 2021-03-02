@@ -2,6 +2,7 @@ import random
 
 import discord
 from discord.ext import commands
+from typing import List
 
 
 @commands.command(name="lt")
@@ -40,12 +41,13 @@ async def losowanie_teamu(ctx, num_of_teams: int = 2):
 
     # ZAMIANIA reaction.users(): AsyncIterator na reaction.users(): list poprzez flatten()
     users = await reaction.users().flatten()
-    patricipants = [user.id for user in users if user.name != "TEINF"]
-    random.shuffle(patricipants)  # mieszanie listy
+    users = [user for user in users if not user.bot]
 
-    teams = []
+    random.shuffle(users)
+
+    teams: List[discord.User] = []
     for i in range(1, num_of_teams + 1):
-        teams.append(patricipants[i - 1::num_of_teams])
+        teams.append(users[i - 1::num_of_teams])
 
     message = await ctx.fetch_message(message.id)
     await message.delete()  # usuwanie wcześniej wysłanych wiadomości
@@ -53,12 +55,11 @@ async def losowanie_teamu(ctx, num_of_teams: int = 2):
     for i, team in enumerate(teams):
         color = discord.Color.random()
 
-        teamStr = ""
-        for userNumber, userId in enumerate(team, start=1):
-            teamStr += f"{userNumber}. <@{userId}>\n"
+        team_users = ""
+        for userNumber, user in enumerate(team, start=1):
+            team_users += f"{userNumber}. {user.mention}\n"
 
-        team_embed = discord.Embed(
-            title=f"TEAM {i + 1}", description=teamStr, colour=color)
+        team_embed = discord.Embed(title=f"TEAM {i + 1}", description=team_users, colour=color)
 
         await ctx.send(embed=team_embed)
 

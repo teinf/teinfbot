@@ -1,26 +1,41 @@
 import discord
 from discord.ext import commands
+from discord_slash import SlashContext, SlashCommandOptionType, cog_ext
+from discord_slash.utils import manage_commands
 
+from teinfbot.bot import TeinfBot
 from teinfbot.db import db_session
 from teinfbot.models import TeinfMember
+from teinfbot.utils.guilds import guild_ids
 from teinfbot.utils.time import TimeUtils
 
 
-@commands.command()
-async def czas(ctx: commands.Context, member: discord.Member = None):
-    await ctx.message.delete()
+class Czas(commands.Cog):
+    def __init__(self, bot: TeinfBot):
+        self.bot: TeinfBot = bot
 
-    member = member or ctx.message.author
+    @cog_ext.cog_slash(name="czas", guild_ids=guild_ids, options=[
+        manage_commands.create_option(
+            name="user",
+            description="Wyświetlenie czasu użytkownika na serwerze",
+            option_type=SlashCommandOptionType.USER,
+            required=False
+        )
+    ])
+    async def __czas(self, ctx: SlashContext, user: discord.Member = None):
+        await ctx.ack(True)
 
-    teinfMember: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=member.id).first()
+        user = user or ctx.author
 
-    em = discord.Embed(
-        title="Czas spędzony na serwerze",
-        description=f"{member.display_name} spędził {TimeUtils.getTimeDescFromMinutes(teinfMember.timespent)} na serwerze",
-        color=discord.Colour.green()
-    )
-    await ctx.send(embed=em)
+        teinfMember: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=user.id).first()
+
+        em = discord.Embed(
+            title="Czas spędzony na serwerze",
+            description=f"{user.display_name} spędził {TimeUtils.getTimeDescFromMinutes(teinfMember.timespent)} na serwerze",
+            color=discord.Colour.green()
+        )
+        await ctx.send(embed=em)
 
 
-def setup(bot):
-    bot.add_command(czas)
+def setup(bot: TeinfBot):
+    bot.add_cog(Czas(bot))

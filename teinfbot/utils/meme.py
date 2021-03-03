@@ -1,13 +1,16 @@
 from __future__ import annotations
-import discord
-import random
-import aiohttp
-from bs4 import BeautifulSoup
+
 import io
+import random
+
+import aiohttp
+import discord
 import requests
+from bs4 import BeautifulSoup
+
 
 class Meme:
-    def __init__(self, title: str, url: str , image_url: str, tags: List[str], votes: int):
+    def __init__(self, title: str, url: str, image_url: str, tags: List[str], votes: int):
         self.title = title
         self.url = url
         self.image_url = image_url
@@ -18,7 +21,7 @@ class Meme:
     def embed(self) -> discord.Embed:
         em = discord.Embed(title=self.title)
         em.set_image(url=self.image_url)
-        
+
         em.add_field(
             name="URL",
             value=self.url
@@ -31,13 +34,13 @@ class Meme:
         return em
 
     @staticmethod
-    def parse_meme(html: str) ->  Meme:
+    def parse_meme(html: str) -> Meme:
         soup = BeautifulSoup(html, "html.parser")
 
         tags = []
         for tag in soup.find_all('a', class_='article-tag'):
             tags.append(tag.text)
-        
+
         if soup.find('img', class_='article-image'):
             # zdjęcie
             image_url = soup.find('img', class_='article-image')['src']
@@ -59,7 +62,7 @@ class Meme:
         meme = Meme(title, url, image_url, tags, votes)
 
         return meme
-    
+
     @staticmethod
     def parse_memes(html: str) -> List[Meme]:
         memes: List[Meme] = []
@@ -73,7 +76,7 @@ class Meme:
 
             if meme:
                 memes.append(meme)
-        
+
         return memes
 
     @staticmethod
@@ -89,7 +92,6 @@ class Meme:
 
                 meme = Meme.parse_meme(data)
                 return meme
-
 
     @staticmethod
     def random_meme(page: int = None) -> Meme:
@@ -112,10 +114,8 @@ class Meme:
 
         url = f'https://jbzd.com.pl/str/{page}'
 
-
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                 data = io.BytesIO(await resp.read())
 
                 return random.choice(Meme.parse_memes(data))
-

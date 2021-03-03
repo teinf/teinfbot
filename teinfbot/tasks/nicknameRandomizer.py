@@ -6,6 +6,7 @@ from discord.ext import tasks
 from teinfbot.bot import TeinfBot
 from teinfbot.paths import ASSETS_PATH
 from teinfbot.utils.files import FileUtils
+from teinfbot.utils.guilds import guild_ids
 
 
 async def randomize_nicknames_starter(bot: TeinfBot):
@@ -15,7 +16,7 @@ async def randomize_nicknames_starter(bot: TeinfBot):
 
 @tasks.loop(hours=24)
 async def randomize_nicknames(bot):
-    teinf = bot.get_guild(bot.guild_id)
+    teinf = bot.get_guild(guild_ids[0])
 
     RANDOM_NICKNAME_PATH = os.path.join(ASSETS_PATH, "random_nicknames")
     RANDOM_NICKNAME_CHANNEL_ID = 720628646267584572

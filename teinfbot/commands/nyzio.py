@@ -2,13 +2,22 @@ import random
 import string
 
 from discord.ext import commands
+from discord_slash import SlashContext, cog_ext
+
+from teinfbot.bot import TeinfBot
+from teinfbot.utils.guilds import guild_ids
 
 
-@commands.command()
-async def nyzio(ctx: commands.Context):
-    random_letter = random.choice(string.ascii_uppercase)
-    await ctx.send(random_letter + "yzio")
+class Nyzio(commands.Cog):
+    def __init__(self, bot: TeinfBot):
+        self.bot: TeinfBot = bot
+
+    @cog_ext.cog_slash(name="nyzio", guild_ids=guild_ids)
+    async def __nyzio(self, ctx: SlashContext):
+        await ctx.ack(True)
+        random_letter = random.choice(string.ascii_uppercase)
+        await ctx.send(random_letter + "yzio")
 
 
-def setup(bot):
-    bot.add_command(nyzio)
+def setup(bot: TeinfBot):
+    bot.add_cog(Nyzio(bot))

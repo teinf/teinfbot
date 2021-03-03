@@ -1,6 +1,7 @@
+import colorama
 import discord
 from discord.ext import commands
-import colorama
+from discord_slash import SlashCommand
 
 from teinfbot.db import db_session
 from teinfbot.paths import *
@@ -14,8 +15,6 @@ class TeinfBot(commands.Bot):
             reconnect=True,
         )
 
-        self.guild_id = 406476256646004736
-
     def run(self):
         try:
             self.loop.run_until_complete(self.bot_start())
@@ -23,6 +22,7 @@ class TeinfBot(commands.Bot):
             self.loop.run_until_complete(self.bot_close())
 
     async def bot_start(self):
+        slash = SlashCommand(self, override_type=True, sync_commands=True)
         self.retrieve_extensions()
         token = os.environ.get("ACCESS_TOKEN")
         await self.login(token)

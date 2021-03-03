@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from teinfbot.bot import TeinfBot
 from teinfbot.db import db_session
 from teinfbot.models import TeinfMember
@@ -7,7 +8,6 @@ from teinfbot.models import TeinfMember
 
 @commands.command()
 async def msg(ctx: commands.Context, member: discord.Member = None):
-
     await ctx.message.delete()
 
     member = member or ctx.author

@@ -1,8 +1,8 @@
 import random
+from typing import List
 
 import discord
 from discord.ext import commands
-from typing import List
 
 
 @commands.command(name="lt")

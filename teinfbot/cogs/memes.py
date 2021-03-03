@@ -1,8 +1,6 @@
 import io
-import random
 
 import aiohttp
-import discord
 from bs4 import BeautifulSoup
 from discord.ext import commands
 
@@ -27,7 +25,6 @@ class Memes(commands.Cog):
 
     @commands.command()
     async def mem(self, ctx):
-
         await ctx.message.delete()
         random_meme = await Meme.random_meme_async()
 

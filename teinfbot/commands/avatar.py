@@ -1,17 +1,29 @@
 import discord
 from discord.ext import commands
+from discord_slash import SlashContext, SlashCommandOptionType, cog_ext
+from discord_slash.utils import manage_commands
+
+from teinfbot.bot import TeinfBot
+from teinfbot.utils.guilds import guild_ids
 
 
-@commands.command()
-async def avatar(ctx: commands.Context, member: discord.Member = None):
-    """ Wyświetla link z obrazem użtykownika @nick
-    jeśli nie podamy użytkownika, to wywołamy na sobie """
+class Avatar(commands.Cog):
+    def __init__(self, bot: TeinfBot):
+        self.bot: TeinfBot = bot
 
-    await ctx.message.delete()
+    @cog_ext.cog_slash(name="avatar", guild_ids=guild_ids, options=[
+        manage_commands.create_option(
+            name="user",
+            description="Użytkownik o którym podać informacje",
+            option_type=SlashCommandOptionType.USER,
+            required=False
+        )
+    ])
+    async def __avatar(self, ctx: SlashContext, user: discord.Member = None):
+        await ctx.ack(True)
+        user = user or ctx.author
+        await ctx.send(f"{user.avatar_url}")
 
-    member = member or ctx.message.author
-    await ctx.send(f"{member.avatar_url}")
 
-
-def setup(bot):
-    bot.add_command(avatar)
+def setup(bot: TeinfBot):
+    bot.add_cog(Avatar(bot))

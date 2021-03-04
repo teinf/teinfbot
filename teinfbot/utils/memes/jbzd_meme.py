@@ -68,7 +68,7 @@ class JbzdMeme(Meme):
             async with session.get(url) as resp:
                 data = io.BytesIO(await resp.read())
 
-                meme = cls.scrap_meme(str(data))
+                meme = cls.scrap_meme(data)
                 return meme
 
     @classmethod
@@ -94,4 +94,4 @@ class JbzdMeme(Meme):
             async with session.get(url) as resp:
                 data = io.BytesIO(await resp.read())
 
-                return random.choice(cls.scrap_memes(str(data)))
+                return random.choice(cls.scrap_memes(data))

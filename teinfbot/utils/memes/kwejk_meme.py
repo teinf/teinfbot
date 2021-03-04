@@ -57,7 +57,7 @@ class KwejkMeme(Meme):
             async with session.get(cls.KWEJK_LOSOWY_URL) as resp:
                 data = io.BytesIO(await resp.read())
 
-                return cls.scrap_meme(str(data))
+                return cls.scrap_meme(data)
 
     @classmethod
     def random_meme(cls) -> KwejkMeme:

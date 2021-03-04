@@ -17,7 +17,7 @@ class Clear(commands.Cog):
         deleted = await ctx.channel.purge(limit=10)
         await ctx.channel.send('Usunięto {} wiadomości'.format(len(deleted)), delete_after=5)
     
-    @cog_ext.cog_subcommand(base="clear", name="default", guild_ids=guild_ids, options=[
+    @cog_ext.cog_subcommand(base="clear", name="default",  description="Domyślne usuwanie wiadomości", guild_ids=guild_ids, options=[
             manage_commands.create_option(
                 name="limit",
                 description="Ilośc wiadomości do przeszukania",
@@ -31,7 +31,7 @@ class Clear(commands.Cog):
         deleted = await ctx.channel.purge(limit=limit)
         await ctx.channel.send('Usunięto {} wiadomości'.format(len(deleted)), delete_after=5)
 
-    @cog_ext.cog_subcommand(base="clear", name="text", guild_ids=guild_ids, options=[
+    @cog_ext.cog_subcommand(base="clear", name="text", description="Usuwanie wiadomości na podstawie tekstu", guild_ids=guild_ids, options=[
         manage_commands.create_option(
             name="limit",
             description="Ilośc wiadomości do przeszukania",
@@ -51,7 +51,7 @@ class Clear(commands.Cog):
         deleted = await ctx.channel.purge(limit=limit, check=lambda msg: text in msg.content)
         await ctx.channel.send('Usunięto {} wiadomości'.format(len(deleted)), delete_after=5)
 
-    @cog_ext.cog_subcommand(base="clear", name="media", guild_ids=guild_ids, options=[
+    @cog_ext.cog_subcommand(base="clear", name="media",  description="Usuwanie zdjęć/filmików", guild_ids=guild_ids, options=[
         manage_commands.create_option(
             name="limit",
             description="Ilośc wiadomości do przeszukania",
@@ -65,7 +65,7 @@ class Clear(commands.Cog):
         deleted = await ctx.channel.purge(limit=limit, check=lambda msg: msg.attachments)
         await ctx.channel.send('Usunięto {} wiadomości'.format(len(deleted)), delete_after=5)
 
-    @cog_ext.cog_subcommand(base="clear", name="user", guild_ids=guild_ids, options=[
+    @cog_ext.cog_subcommand(base="clear", name="user", description="Usuwanie wiadomości użytkownika", guild_ids=guild_ids, options=[
         manage_commands.create_option(
             name="limit",
             description="Ilośc wiadomości do przeszukania",

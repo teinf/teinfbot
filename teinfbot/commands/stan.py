@@ -13,7 +13,7 @@ class Stan(commands.Cog):
     def __init__(self, bot: TeinfBot):
         self.bot: TeinfBot = bot
 
-    @cog_ext.cog_slash(name="stan", guild_ids=guild_ids, options=[
+    @cog_ext.cog_slash(name="stan", guild_ids=guild_ids, description="Wyświetla stan konta", options=[
         manage_commands.create_option(
             name="user",
             description="Użtykownik",

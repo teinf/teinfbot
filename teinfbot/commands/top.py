@@ -11,18 +11,18 @@ from teinfbot.utils.time import TimeUtils
 from typing import List
 
 
-class Top(commands.Cog):
+class Ranking(commands.Cog):
     def __init__(self, bot: TeinfBot):
         self.bot: TeinfBot = bot
 
-    @cog_ext.cog_slash(name="top", guild_ids=guild_ids)
-    async def __top(self, ctx: SlashContext):
+    @cog_ext.cog_slash(name="ranking", description="Wyświetla ranking", guild_ids=guild_ids)
+    async def __ranking(self, ctx: SlashContext):
         await ctx.ack(True)
 
         topTimeSpentMembers: List[TeinfMember] = db_session.query(TeinfMember).order_by(TeinfMember.timespent).all()
         i = 1
 
-        topkaTitle = "TOP CZASU"
+        topkaTitle = "Ranking"
         topkaDescription = ""
 
         for member in topTimeSpentMembers[::-1]:
@@ -44,4 +44,4 @@ class Top(commands.Cog):
 
 
 def setup(bot: TeinfBot):
-    bot.add_cog(Top(bot))
+    bot.add_cog(Ranking(bot))

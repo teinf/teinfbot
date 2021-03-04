@@ -4,7 +4,7 @@ from typing import Tuple
 from discord.ext import tasks
 
 from teinfbot.bot import TeinfBot
-from teinfbot.paths import ASSETS_PATH
+from teinfbot.utils.paths import ASSETS_PATH
 from teinfbot.utils.files import FileUtils
 from teinfbot.utils.guilds import guild_ids
 

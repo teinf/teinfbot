@@ -14,10 +14,10 @@ class Level(commands.Cog):
     def __init__(self, bot: TeinfBot):
         self.bot: TeinfBot = bot
 
-    @cog_ext.cog_slash(name="level", guild_ids=guild_ids, options=[
+    @cog_ext.cog_slash(name="level", description="Wyświetla poziom", guild_ids=guild_ids, options=[
         manage_commands.create_option(
             name="user",
-            description="Wyświetlenie poziomu użytkownika na serwerze",
+            description="Użytkownik",
             option_type=SlashCommandOptionType.USER,
             required=False
         )

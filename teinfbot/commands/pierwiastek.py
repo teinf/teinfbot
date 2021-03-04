@@ -44,7 +44,7 @@ class Pierwiastek(commands.Cog):
         else:
             return str(lewaStrona) + znakPierwiastka + str(prawaStrona)
 
-    @cog_ext.cog_slash(name="pierwiastek", guild_ids=guild_ids, options=[
+    @cog_ext.cog_slash(name="pierwiastek", guild_ids=guild_ids, description="Pierwiastkuje liczbę", options=[
         manage_commands.create_option(
             name="liczba",
             description="Liczba do spierwiastkowania",

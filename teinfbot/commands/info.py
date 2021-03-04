@@ -11,10 +11,10 @@ class Info(commands.Cog):
     def __init__(self, bot: TeinfBot):
         self.bot: TeinfBot = bot
 
-    @cog_ext.cog_slash(name="info", guild_ids=guild_ids, options=[
+    @cog_ext.cog_slash(name="info", description="Wyświetla informacje o użytkowniku", guild_ids=guild_ids, options=[
         manage_commands.create_option(
             name="user",
-            description="Wyświetlenie danych użytkownika",
+            description="Użytkownik",
             option_type=SlashCommandOptionType.USER,
             required=False
         )

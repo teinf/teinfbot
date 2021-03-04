@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord_slash import SlashCommand
 
 from teinfbot.db import db_session
-from teinfbot.paths import *
+from teinfbot.utils.paths import *
 
 
 class TeinfBot(commands.Bot):
@@ -42,7 +42,6 @@ class TeinfBot(commands.Bot):
 
             print(colorama.Style.RESET_ALL)
 
-        addExtension(COGS_PATH, "cogs")
         addExtension(COMMANDS_PATH, "commands")
         addExtension(TASKS_PATH, "tasks")
         addExtension(EVENTS_PATH, "events")

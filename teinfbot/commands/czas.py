@@ -14,10 +14,10 @@ class Czas(commands.Cog):
     def __init__(self, bot: TeinfBot):
         self.bot: TeinfBot = bot
 
-    @cog_ext.cog_slash(name="czas", guild_ids=guild_ids, options=[
+    @cog_ext.cog_slash(name="czas",  description="Wyświetla czas spędzony na serwerze",guild_ids=guild_ids, options=[
         manage_commands.create_option(
             name="user",
-            description="Wyświetlenie czasu użytkownika na serwerze",
+            description="Użytkownik",
             option_type=SlashCommandOptionType.USER,
             required=False
         )

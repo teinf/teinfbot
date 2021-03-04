@@ -9,6 +9,11 @@ from teinfbot.db import db_session
 from teinfbot.models import TeinfMember
 from teinfbot.utils.emojis import EmojiUtils
 
+from discord_slash import SlashContext, SlashCommandOptionType, cog_ext
+from discord_slash import manage_commands
+from teinfbot.utils.guilds import guild_ids
+
+
 
 class RussianRoulette(commands.Cog):
     def __init__(self, bot):
@@ -20,7 +25,7 @@ class RussianRoulette(commands.Cog):
             desc += f"{i}. {str(player.member)}\n"
         return desc
 
-    async def handle_reactions(self, ctx: commands.Context, msg: discord.Message, player: discord.Member):
+    async def handle_reactions(self, ctx: SlashContext, msg: discord.Message, player: discord.Member):
         try:
             reaction, user = await self.bot.wait_for(
                 "reaction_add",
@@ -39,14 +44,21 @@ class RussianRoulette(commands.Cog):
             ))
             return -1
 
-    @commands.command(name="rr")
-    async def rr(self, ctx: commands.Context, BET_AMOUNT: int):
-        if BET_AMOUNT <= 0:
+    @cog_ext.cog_slash(name="rr", description="Rosyjska ruletka", guild_ids=guild_ids, options=[
+        manage_commands.create_option(
+            name="bet",
+            description="Wartość zakładu",
+            option_type=SlashCommandOptionType.INTEGER,
+            required=True
+        )
+    ])
+    async def __rr(self, ctx: SlashContext, bet: int):
+        if bet <= 0:
             return
 
         start_embed = discord.Embed(
             title="Rosyjska ruletka",
-            description=f"Czy podejmiesz się wyzwaniu?\nKliknij 🔫 aby dołączyć\n🏁 aby wystartować\nKoszt wstępu: `{BET_AMOUNT}` chillcoinsów",
+            description=f"Czy podejmiesz się wyzwaniu?\nKliknij 🔫 aby dołączyć\n🏁 aby wystartować\nKoszt wstępu: `{bet}` chillcoinsów",
             color=discord.Color.red()
         )
 
@@ -83,12 +95,12 @@ class RussianRoulette(commands.Cog):
         for player in players:
             member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=player.id).first()
             money = member.money
-            if money < BET_AMOUNT:
+            if money < bet:
                 players.remove(player)
                 await player.member.send(
                     "Niestety nie możesz zagrać w rosyjską ruletkę - masz za mało pieniędzy! - {}".format(money))
             else:
-                member.money -= BET_AMOUNT
+                member.money -= bet
 
         if len(players) <= 1:
             return
@@ -159,7 +171,7 @@ class RussianRoulette(commands.Cog):
             color=discord.Color.green()
         )
 
-        money_gained = start_players_amount * BET_AMOUNT
+        money_gained = start_players_amount * bet
         exp_gained = money_gained // 2
         embed.set_footer(text=f"+{money_gained}cc, +{exp_gained}exp")
         await ctx.send(embed=embed)

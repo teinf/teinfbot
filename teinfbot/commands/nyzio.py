@@ -12,7 +12,7 @@ class Nyzio(commands.Cog):
     def __init__(self, bot: TeinfBot):
         self.bot: TeinfBot = bot
 
-    @cog_ext.cog_slash(name="nyzio", guild_ids=guild_ids)
+    @cog_ext.cog_slash(name="nyzio", description="Nyzio", guild_ids=guild_ids)
     async def __nyzio(self, ctx: SlashContext):
         await ctx.ack(True)
         random_letter = random.choice(string.ascii_uppercase)

@@ -13,7 +13,7 @@ class Lt(commands.Cog):
     def __init__(self, bot: TeinfBot):
         self.bot: TeinfBot = bot
 
-    @cog_ext.cog_slash(name="lt", guild_ids=guild_ids, options=[
+    @cog_ext.cog_slash(name="lt", guild_ids=guild_ids, description="Wylosowanie teamów", options=[
         manage_commands.create_option(
             name="ilosc_druzyn",
             description="Ilość drużyn do losowania teamu",

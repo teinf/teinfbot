@@ -15,7 +15,7 @@ class Ruletka(commands.Cog):
     def __init__(self, bot: TeinfBot):
         self.bot: TeinfBot = bot
 
-    @cog_ext.cog_slash(name="ruletka", guild_ids=guild_ids, options=[
+    @cog_ext.cog_slash(name="ruletka", description="Ruletka", guild_ids=guild_ids, options=[
         manage_commands.create_option(
             name="bet",
             description="Wartość zakładu",

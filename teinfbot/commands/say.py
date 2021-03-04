@@ -7,122 +7,23 @@ from discord_slash.utils import manage_commands
 from gtts import gTTS
 
 from teinfbot.bot import TeinfBot
-from teinfbot.paths import ASSETS_PATH
+from teinfbot.utils.paths import ASSETS_PATH
 from teinfbot.utils.guilds import guild_ids
+
+import json
 
 
 class Say(commands.Cog):
     def __init__(self, bot: TeinfBot):
         self.bot: TeinfBot = bot
 
-    @cog_ext.cog_slash(name="say", guild_ids=guild_ids, options=[
+    @cog_ext.cog_slash(name="say", guild_ids=guild_ids, description="Mówi daną wiadomość w podanym języku", options=[
         manage_commands.create_option(
             name="lang",
             description="Język mówienia",
             option_type=SlashCommandOptionType.STRING,
             # choices=[{"name": value, "value": key} for key, value in langs._langs.items()],
-            choices=[
-                {
-                    'name': 'Afrykański',
-                    'value': 'af'
-                },
-                {
-                    'name': 'Arabski',
-                    'value': 'ar'
-                },
-                {
-                    'name': 'Czeski',
-                    'value': 'ch'
-                },
-                {
-                    'name': 'Niemiecki',
-                    'value': 'de'
-                },
-                {
-                    'name': 'Angielski',
-                    'value': 'en'
-                },
-                {
-                    'name': 'Grecki',
-                    'value': 'el'
-                },
-                {
-                    'name': 'Hiszpański',
-                    'value': 'es'
-                },
-                {
-                    'name': 'Francuzki',
-                    'value': 'fr'
-                },
-                {
-                    'name': 'Hindi',
-                    'value': 'hi'
-                },
-                {
-                    'name': 'Włoski',
-                    'value': 'it'
-                },
-                {
-                    'name': 'Khmer',
-                    'value': 'km'
-                },
-                {
-                    'name': 'Koreanśki',
-                    'value': 'ko'
-                },
-                {
-                    'name': 'Łaciński',
-                    'value': 'la'
-                },
-                {
-                    'name': 'Norweski',
-                    'value': 'no'
-                },
-                {
-                    'name': 'Polski',
-                    'value': 'pl'
-                },
-                {
-                    'name': 'Rosyjski',
-                    'value': 'ru'
-                },
-                {
-                    'name': 'Słowacki',
-                    'value': 'sk'
-                },
-                {
-                    'name': 'Albanian',
-                    'value': 'sq'
-                },
-                {
-                    'name': 'Szwedzki',
-                    'value': 'sv'
-                },
-                {
-                    'name': 'Turecki',
-                    'value': 'tr'
-                },
-                {
-                    'name': 'Ukraiński',
-                    'value': 'uk'
-                },
-                {
-                    'name': 'Arabski',
-                    'value': 'af'
-                },
-                {
-                    'name': 'Thai',
-                    'value': 'th'
-                },
-                {
-                    'name': 'Wietnamski',
-                    'value': 'vi'
-                },
-                {
-                    'name': 'Chiński',
-                    'value': 'zh-CN'
-                }
-            ],
+            choices=json.loads(open(os.path.join(ASSETS_PATH, 'gtts', 'languages.json'), 'r').read()),
             required=True
         ),
         manage_commands.create_option(

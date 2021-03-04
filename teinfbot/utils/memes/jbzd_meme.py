@@ -2,39 +2,21 @@ from __future__ import annotations
 
 import io
 import random
+from typing import List, Optional
 
 import aiohttp
-import discord
 import requests
 from bs4 import BeautifulSoup
 
+from teinfbot.utils.memes import Meme
 
-class Meme:
-    def __init__(self, title: str, url: str, image_url: str, tags: List[str], votes: int):
-        self.title = title
-        self.url = url
-        self.image_url = image_url
-        self.tags = tags
-        self.votes = votes
 
-    @property
-    def embed(self) -> discord.Embed:
-        em = discord.Embed(title=self.title)
-        em.set_image(url=self.image_url)
+class JbzdMeme(Meme):
+    def __init__(self, title: str, url: str, image_url: str, tags: List[str]):
+        super().__init__(title, url, image_url, tags)
 
-        em.add_field(
-            name="URL",
-            value=self.url
-        )
-
-        em.set_footer(
-            text=" ".join(self.tags)
-        )
-
-        return em
-
-    @staticmethod
-    def parse_meme(html: str) -> Meme:
+    @classmethod
+    def scrap_meme(cls, html: str) -> Optional[JbzdMeme]:
         soup = BeautifulSoup(html, "html.parser")
 
         tags = []
@@ -49,68 +31,62 @@ class Meme:
             image_url = soup.find('video', class_='video-js').source['src']
 
         else:
-            with open('x.html', 'w') as f:
-                f.write(html)
             return None
-
-        votes = int(soup.find('vote')[':score'])
 
         title = soup.find('h3', class_='article-title').a.text.lstrip().rstrip()
 
         url = soup.find('h3', class_='article-title').a['href']
 
-        meme = Meme(title, url, image_url, tags, votes)
+        meme = JbzdMeme(title, url, image_url, tags)
 
         return meme
 
-    @staticmethod
-    def parse_memes(html: str) -> List[Meme]:
-        memes: List[Meme] = []
+    @classmethod
+    def scrap_memes(cls, html: str) -> List[JbzdMeme]:
+        memes: List[JbzdMeme] = []
 
         soup = BeautifulSoup(html, 'html.parser')
 
         articles = soup.findAll('article', class_='article')
 
         for article in articles:
-            meme = Meme.parse_meme(str(article))
+            meme = cls.scrap_meme(str(article))
 
             if meme:
                 memes.append(meme)
 
         return memes
 
-    @staticmethod
-    def get_meme(url: str) -> Meme:
+    @classmethod
+    def get_meme(cls, url: str) -> JbzdMeme:
         data = requests.get(url)
-        return Meme.parse_meme(data.text)
+        return cls.scrap_meme(data.text)
 
-    @staticmethod
-    async def get_meme_async(url: str) -> Meme:
+    @classmethod
+    async def get_meme_async(cls, url: str) -> JbzdMeme:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                 data = io.BytesIO(await resp.read())
 
-                meme = Meme.parse_meme(data)
+                meme = cls.scrap_meme(data)
                 return meme
 
-    @staticmethod
-    def random_meme(page: int = None) -> Meme:
+    @classmethod
+    def random_meme(cls) -> JbzdMeme:
 
-        if not page:
-            page = random.randint(1, 200)
+        page = random.randint(1, 200)
 
         url = f'https://jbzd.com.pl/str/{page}'
 
         data = requests.get(url)
-        memes = Meme.parse_memes(data.text)
+        memes = cls.scrap_memes(data.text)
 
         return random.choice(memes)
 
-    @staticmethod
-    async def random_meme_async(page: int = None) -> Meme:
+    @classmethod
+    async def random_meme_async(cls) -> JbzdMeme:
 
-        if not page:
-            page = random.randint(1, 200)
+        page = random.randint(1, 200)
 
         url = f'https://jbzd.com.pl/str/{page}'
 
@@ -118,4 +94,4 @@ class Meme:
             async with session.get(url) as resp:
                 data = io.BytesIO(await resp.read())
 
-                return random.choice(Meme.parse_memes(data))
+                return random.choice(cls.scrap_memes(data))

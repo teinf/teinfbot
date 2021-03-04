@@ -1,0 +1,102 @@
+[
+    {
+        "name": "Afrykański",
+        "value": "af"
+    },
+    {
+        "name": "Arabski",
+        "value": "ar"
+    },
+    {
+        "name": "Czeski",
+        "value": "ch"
+    },
+    {
+        "name": "Niemiecki",
+        "value": "de"
+    },
+    {
+        "name": "Angielski",
+        "value": "en"
+    },
+    {
+        "name": "Grecki",
+        "value": "el"
+    },
+    {
+        "name": "Hiszpański",
+        "value": "es"
+    },
+    {
+        "name": "Francuzki",
+        "value": "fr"
+    },
+    {
+        "name": "Hindi",
+        "value": "hi"
+    },
+    {
+        "name": "Włoski",
+        "value": "it"
+    },
+    {
+        "name": "Khmer",
+        "value": "km"
+    },
+    {
+        "name": "Koreanśki",
+        "value": "ko"
+    },
+    {
+        "name": "Łaciński",
+        "value": "la"
+    },
+    {
+        "name": "Norweski",
+        "value": "no"
+    },
+    {
+        "name": "Polski",
+        "value": "pl"
+    },
+    {
+        "name": "Rosyjski",
+        "value": "ru"
+    },
+    {
+        "name": "Słowacki",
+        "value": "sk"
+    },
+    {
+        "name": "Albański",
+        "value": "sq"
+    },
+    {
+        "name": "Szwedzki",
+        "value": "sv"
+    },
+    {
+        "name": "Turecki",
+        "value": "tr"
+    },
+    {
+        "name": "Ukraiński",
+        "value": "uk"
+    },
+    {
+        "name": "Arabski",
+        "value": "af"
+    },
+    {
+        "name": "Thai",
+        "value": "th"
+    },
+    {
+        "name": "Wietnamski",
+        "value": "vi"
+    },
+    {
+        "name": "Chiński",
+        "value": "zh-CN"
+    }
+]

@@ -9,6 +9,7 @@ from gtts import gTTS
 from teinfbot.bot import TeinfBot
 from teinfbot.utils.paths import ASSETS_PATH
 from teinfbot.utils.guilds import guild_ids
+import asyncio
 
 import json
 
@@ -36,14 +37,38 @@ class Say(commands.Cog):
     async def __say(self, ctx: SlashContext, lang: str, message: str):
         await ctx.ack(True)
 
-        TTS_FILE_NAME = 'music.mp3'
+        if len(message) <= 1:
+            return
+            
+        TTS_FILE_NAME = 'translated_message.mp3'
         TTS_FILE_PATH = os.path.join(ASSETS_PATH, 'gtts', TTS_FILE_NAME)
 
         tts = gTTS(message, lang=lang)
         with open(TTS_FILE_PATH, 'wb') as f:
             tts.write_to_fp(f)
 
-        await ctx.send(file=discord.File(TTS_FILE_PATH))
+        channel: discord.VoiceChannel = ctx.author.voice.channel
+        if channel:
+            voice: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)
+            if voice and voice.is_connected():
+                await voice.move_to(channel)
+            else:
+                voice = await channel.connect()
+
+            
+            voice.play(discord.FFmpegPCMAudio(source=TTS_FILE_PATH))
+
+            while voice.is_playing():
+                await asyncio.sleep(0.1)
+
+            await voice.disconnect()
+        else:
+            await ctx.send(file=discord.File(TTS_FILE_PATH))
+        
+
+        
+
+
 
 
 def setup(bot: TeinfBot):

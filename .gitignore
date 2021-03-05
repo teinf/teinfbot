@@ -140,3 +140,5 @@ __pycache__/
 discord_users.db
 discord_users
 cogs/.DS_Store
+
+teinfbot/assets/gtts/*.mp3

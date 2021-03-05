@@ -7,13 +7,14 @@ verify_ssl = true
 autopep8 = "*"
 
 [packages]
-"discord.py" = "*"
+"discord.py" = {extras = ["voice"], version = "*"}
 gtts = "*"
 sqlalchemy = "*"
 beautifulsoup4 = "*"
 colorama = "*"
 psycopg2 = "*"
 discord-py-slash-command = "*"
+pynacl = "*"
 
 [requires]
 python_version = "3.9"

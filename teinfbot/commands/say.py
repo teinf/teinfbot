@@ -47,8 +47,8 @@ class Say(commands.Cog):
         with open(TTS_FILE_PATH, 'wb') as f:
             tts.write_to_fp(f)
 
-        channel: discord.VoiceChannel = ctx.author.voice.channel
-        if channel:
+        if ctx.author.voice:
+            channel: discord.VoiceChannel = ctx.author.voice.channel
             voice: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)
             if voice and voice.is_connected():
                 await voice.move_to(channel)

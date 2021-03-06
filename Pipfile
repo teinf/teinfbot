@@ -15,6 +15,7 @@ colorama = "*"
 psycopg2 = "*"
 discord-py-slash-command = "*"
 pynacl = "*"
+youtube-dl = "*"
 
 [requires]
 python_version = "3.9"

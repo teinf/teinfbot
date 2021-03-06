@@ -40,7 +40,7 @@ class Music(commands.Cog):
             voice.play(discord.FFmpegPCMAudio(cls.queue[0].source, **cls.FFMPEG_OPTS), after=lambda x: cls.play_next_song(voice))
             
         
-    @cog_ext.cog_subcommand(base='music', name='play', guild_ids=guild_ids, options=[
+    @cog_ext.cog_subcommand(base='music', name='play', description="Włącza podaną piosenkę", guild_ids=guild_ids, options=[
         manage_commands.create_option(
             name="url",
             description="Link do muzyki",
@@ -73,7 +73,7 @@ class Music(commands.Cog):
 
         voice.play(discord.FFmpegPCMAudio(music_video.source, **self.FFMPEG_OPTS), after=lambda x: self.play_next_song(voice))
 
-    @cog_ext.cog_subcommand(base='music', name='pause', guild_ids=guild_ids)
+    @cog_ext.cog_subcommand(base='music', name='pause', description="Pauzuje piosenkę", guild_ids=guild_ids)
     async def __music_pause(self, ctx: SlashContext):
         await ctx.ack(True)
         voice: discord.VoiceClient = discord.utils.get(
@@ -81,7 +81,7 @@ class Music(commands.Cog):
         if voice.is_playing():
             voice.pause()
 
-    @cog_ext.cog_subcommand(base='music', name='resume', guild_ids=guild_ids)
+    @cog_ext.cog_subcommand(base='music', name='resume', description="Wznawia piosenkę", guild_ids=guild_ids)
     async def __music_resume(self, ctx: SlashContext):
         await ctx.ack(True)
         voice: discord.VoiceClient = discord.utils.get(
@@ -89,20 +89,20 @@ class Music(commands.Cog):
         if not voice.is_playing():
             voice.resume()
 
-    @cog_ext.cog_subcommand(base='music', name='stop', guild_ids=guild_ids)
+    @cog_ext.cog_subcommand(base='music', name='stop', description="Wyłącza granie piosenek", guild_ids=guild_ids)
     async def __music_stop(self, ctx: SlashContext):
         await ctx.ack(True)
         voice: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)
         self.clear_queue()
         voice.stop()
 
-    @cog_ext.cog_subcommand(base='music', name='skip', guild_ids=guild_ids)
+    @cog_ext.cog_subcommand(base='music', name='skip', description="Przechodzi do następnego utworu", guild_ids=guild_ids)
     async def __music_skip(self, ctx: SlashContext):
         await ctx.ack(True)
         voice: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)
         voice.stop()
     
-    @cog_ext.cog_subcommand(base='music', name='clear', guild_ids=guild_ids)
+    @cog_ext.cog_subcommand(base='music', name='clear', description="Czyści kolejkę grania", guild_ids=guild_ids)
     async def __music_clear(self, ctx: SlashContext):
         await ctx.ack(True)
         voice: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)

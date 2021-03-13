@@ -57,9 +57,11 @@ class Music(commands.Cog):
         
         if len(self.queue) >= 1:
             self.queue.append(music_video)
+            await ctx.send(f"Dodano {music_video.title} do kolejki")
             return
         
         elif len(self.queue) == 0:
+            await ctx.send(f"Odtwarzam {music_video.title}")
             self.queue.append(music_video)
 
         voice: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)

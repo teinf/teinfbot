@@ -13,7 +13,7 @@ class Clear(commands.Cog):
 
     @cog_ext.cog_slash(name="clear", description="Usuwanie wiadomości", guild_ids=guild_ids)
     async def __clear(self, ctx: SlashContext):
-        await ctx.ack(True)
+        
         deleted = await ctx.channel.purge(limit=10)
         await ctx.channel.send('Usunięto {} wiadomości'.format(len(deleted)), delete_after=5)
     
@@ -27,7 +27,7 @@ class Clear(commands.Cog):
         ]   
     )
     async def __clear_text(self, ctx: SlashContext, limit: int):
-        await ctx.ack(True)
+        
         deleted = await ctx.channel.purge(limit=limit)
         await ctx.channel.send('Usunięto {} wiadomości'.format(len(deleted)), delete_after=5)
 
@@ -47,7 +47,7 @@ class Clear(commands.Cog):
     ]
                             )
     async def __clear_text(self, ctx: SlashContext, limit: int, text: str):
-        await ctx.ack(True)
+        
         deleted = await ctx.channel.purge(limit=limit, check=lambda msg: text in msg.content)
         await ctx.channel.send('Usunięto {} wiadomości'.format(len(deleted)), delete_after=5)
 
@@ -61,7 +61,7 @@ class Clear(commands.Cog):
     ]
                             )
     async def __clear_media(self, ctx: SlashContext, limit: int, text: str):
-        await ctx.ack(True)
+        
         deleted = await ctx.channel.purge(limit=limit, check=lambda msg: msg.attachments)
         await ctx.channel.send('Usunięto {} wiadomości'.format(len(deleted)), delete_after=5)
 
@@ -82,7 +82,7 @@ class Clear(commands.Cog):
     ]
                             )
     async def __clear_user(self, ctx: SlashContext, limit: int, user: discord.Member):
-        await ctx.ack(True)
+        
         deleted = await ctx.channel.purge(limit=limit, check=lambda msg: user == msg.author)
         await ctx.channel.send('Usunięto {} wiadomości'.format(len(deleted)), delete_after=5)
 

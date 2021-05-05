@@ -14,7 +14,7 @@ class Kutas(commands.Cog):
 
     @cog_ext.cog_slash(name="kutas", description="B======D", guild_ids=guild_ids)
     async def __kutas(self, ctx: SlashContext):
-        await ctx.ack(True)
+        
 
         kutas_len = random.randint(0, 30)
         if kutas_len == 0:

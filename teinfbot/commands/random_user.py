@@ -13,7 +13,7 @@ class RandomUser(commands.Cog):
 
     @cog_ext.cog_slash(name="randomuser", description="Wyświetla losową osobę", guild_ids=guild_ids)
     async def __randomuser(self, ctx: SlashContext):
-        await ctx.ack(True)
+        
         random_user: User = await RandomUserApi.get_random_user_async()
 
         em = discord.Embed()

@@ -24,7 +24,7 @@ class Ruletka(commands.Cog):
         )
     ])
     async def __ruletka(self, ctx: SlashContext, bet: int):
-        await ctx.ack(True)
+        
 
         if bet <= 0:
             return

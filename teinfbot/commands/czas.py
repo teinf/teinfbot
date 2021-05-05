@@ -23,7 +23,7 @@ class Czas(commands.Cog):
         )
     ])
     async def __czas(self, ctx: SlashContext, user: discord.Member = None):
-        await ctx.ack(True)
+        
 
         user = user or ctx.author
 

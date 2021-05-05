@@ -20,7 +20,7 @@ class Avatar(commands.Cog):
         )
     ])
     async def __avatar(self, ctx: SlashContext, user: discord.Member = None):
-        await ctx.ack(True)
+        
         user = user or ctx.author
         await ctx.send(f"{user.avatar_url}")
 

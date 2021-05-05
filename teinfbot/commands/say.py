@@ -35,7 +35,7 @@ class Say(commands.Cog):
         )
     ])
     async def __say(self, ctx: SlashContext, lang: str, message: str):
-        await ctx.ack(True)
+        
 
         if len(message) <= 1:
             return

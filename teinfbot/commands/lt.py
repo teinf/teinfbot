@@ -22,7 +22,7 @@ class Lt(commands.Cog):
         )
     ])
     async def __lt(self, ctx: SlashContext, ilosc_druzyn: int):
-        await ctx.ack(True)
+        
 
         author = ctx.author  # osoba która wywołała komende
 

@@ -20,7 +20,7 @@ class Info(commands.Cog):
         )
     ])
     async def __info(self, ctx: SlashContext, user: discord.Member = None):
-        await ctx.ack(True)
+        
 
         user = user or ctx.author
         informacje = {

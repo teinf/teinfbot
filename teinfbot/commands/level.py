@@ -23,7 +23,7 @@ class Level(commands.Cog):
         )
     ])
     async def __level(self, ctx: SlashContext, user: discord.Member = None):
-        await ctx.ack(True)
+        
         user = user or ctx.author
         teinf_user: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=user.id).first()
         level = LevelsUtils.levelFromExp(teinf_user.exp)

@@ -17,7 +17,7 @@ class Ranking(commands.Cog):
 
     @cog_ext.cog_slash(name="ranking", description="Wyświetla ranking", guild_ids=guild_ids)
     async def __ranking(self, ctx: SlashContext):
-        await ctx.ack(True)
+        
 
         topTimeSpentMembers: List[TeinfMember] = db_session.query(TeinfMember).order_by(TeinfMember.timespent).all()
         i = 1

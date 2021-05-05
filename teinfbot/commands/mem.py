@@ -23,7 +23,7 @@ class Mem(commands.Cog):
         ),
     ])
     async def __mem(self, ctx: SlashContext, strona: str = None):
-        await ctx.ack(True)
+        
 
         strona = strona or random.choice(['jbzd.pl', 'kwejk.pl'])
         if strona == 'jbzd.pl':

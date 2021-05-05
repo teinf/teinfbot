@@ -53,7 +53,7 @@ class Pierwiastek(commands.Cog):
         )
     ])
     async def __pierwiastek(self, ctx: SlashContext, liczba: int):
-        await ctx.ack(True)
+        
         await ctx.send(f"{liczba}: {self.rozklad(liczba)}")
 
 

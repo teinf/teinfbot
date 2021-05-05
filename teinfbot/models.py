@@ -6,7 +6,9 @@ from sqlalchemy import Column, Integer, ForeignKey, BigInteger, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-engine = sqlalchemy.create_engine(os.environ.get("DATABASE_URL"), echo=False)
+DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL.replace("postgres://", "postgresql://")
+engine = sqlalchemy.create_engine(DATABASE_URL, echo=False)
 Base = declarative_base()
 
 
@@ -52,6 +54,7 @@ class Tranzakcje(Base):
         return f"<Tranzakcje({self.id}.{self.date}: {self.TeinfMember})"
 
 
-TeinfMember.Tranzakcje = relationship("Tranzakcje", order_by=Tranzakcje.id, back_populates="TeinfMember")
+TeinfMember.Tranzakcje = relationship(
+    "Tranzakcje", order_by=Tranzakcje.id, back_populates="TeinfMember")
 
 Base.metadata.create_all(engine)

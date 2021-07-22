@@ -4,6 +4,9 @@ import discord
 from discord.ext import commands
 from discord_slash import SlashContext, SlashCommandOptionType, cog_ext
 from discord_slash.utils import manage_commands
+from discord_slash.utils.manage_components import create_actionrow, create_button, wait_for_component, ComponentContext
+from discord_slash.model import ButtonStyle
+
 
 from teinfbot.bot import TeinfBot
 from teinfbot.utils.guilds import guild_ids
@@ -22,7 +25,6 @@ class Lt(commands.Cog):
         )
     ])
     async def __lt(self, ctx: SlashContext, ilosc_druzyn: int):
-        
 
         author = ctx.author  # osoba która wywołała komende
 
@@ -31,30 +33,38 @@ class Lt(commands.Cog):
             description="ABY **DOŁĄCZYĆ** :white_check_mark:\n**KONIEC** CZEKANIA :x:",
             colour=discord.Colour.gold()
         )
-        # wysyłanie wiadomości i zapisywanie jej do message
-        message = await ctx.send(embed=em)
+        join_button = create_button(
+            style=ButtonStyle.green, label="Dołącz", emoji="\u2705")
+        leave_button = create_button(
+            style=ButtonStyle.danger, label="Wyjdź", emoji="⛔")
+        end_button = create_button(
+            style=ButtonStyle.gray, label="Losuj", emoji="🎲")
 
-        emoji_check = '\u2705'
-        emoji_cross = '\u274C'
+        action_row = create_actionrow(join_button, leave_button, end_button)
 
-        await message.add_reaction(emoji_check)
-        await message.add_reaction(emoji_cross)
+        message = await ctx.send(embed=em, components=[action_row])
+        users = []
 
-        def check(r, user):
-            # czekanie na dodawanie reakcji ❌ przez tego kto wywołał komende
-            return str(r.emoji) == emoji_cross and user.id == author.id
+        while True:
+            button_ctx: ComponentContext = await wait_for_component(self.bot, components=action_row)
+            if button_ctx.component_id == join_button["custom_id"]:
+                if button_ctx.author not in users:
+                    users.append(button_ctx.author)
+            elif button_ctx.component_id == leave_button["custom_id"]:
+                if button_ctx.author in users:
+                    users.remove(button_ctx.author)
 
-        # czekanie na dodanie reakcji ❌
-        await ctx.bot.wait_for('reaction_add', timeout=60.0, check=check)
+            elif button_ctx.component_id == end_button["custom_id"] and button_ctx.author_id == ctx.author_id:
+                await button_ctx.edit_origin(embed=em)
+                break
 
-        # musimy odświeżyć informacje o dodanych reakcjach
-        message = await ctx.channel.fetch_message(message.id)
+            em = discord.Embed(
+                title=":star2: LOSOWANIE TEAMU :star2:",
+                description=f"Gracze: {', '.join((user.mention for user in users))}",
+                colour=discord.Colour.gold()
+            )
 
-        reaction = message.reactions[0]  # wzięcie 1 reakcji w tym przypadku ✅
-
-        # ZAMIANIA reaction.users(): AsyncIterator na reaction.users(): list poprzez flatten()
-        users = await reaction.users().flatten()
-        users = [user for user in users if not user.bot]
+            await button_ctx.edit_origin(embed=em)
 
         random.shuffle(users)
 
@@ -72,9 +82,10 @@ class Lt(commands.Cog):
             for userNumber, user in enumerate(team, start=1):
                 team_users += f"{userNumber}. {user.mention}\n"
 
-            team_embed = discord.Embed(title=f"TEAM {i + 1}", description=team_users, colour=color)
+            team_embed = discord.Embed(
+                title=f"TEAM {i + 1}", description=team_users, colour=color)
 
-            await ctx.send(embed=team_embed)
+            await ctx.channel.send(embed=team_embed)
 
 
 def setup(bot: TeinfBot):

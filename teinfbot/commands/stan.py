@@ -21,12 +21,12 @@ class Stan(commands.Cog):
             required=False
         )
     ])
-    async def __stan(self, ctx: SlashContext, user: discord.Member):
-        await ctx.ack(False)
+    async def __stan(self, ctx: SlashContext, user: discord.Member = None):
         if user is None:
             user = ctx.author
 
-        teinf_member: TeinfMember = db_session.query(TeinfMember).filter_by(discordId=user.id).first()
+        teinf_member: TeinfMember = db_session.query(
+            TeinfMember).filter_by(discordId=user.id).first()
 
         embd = discord.Embed(
             title="💵  TEINF BANK  💵",

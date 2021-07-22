@@ -30,15 +30,19 @@ class TeinfBot(commands.Bot):
 
     def retrieve_extensions(self):
         def addExtension(path, prefix):
-            EXTS = [ext.split(".")[0] for ext in os.listdir(path) if ext.endswith(".py")]
-            print(colorama.Fore.BLUE + "\n" + f"=== LOADING {prefix.upper()} ===" + "\n")
+            EXTS = [ext.split(".")[0]
+                    for ext in os.listdir(path) if ext.endswith(".py")]
+            print(colorama.Fore.BLUE + "\n" +
+                  f"=== LOADING {prefix.upper()} ===" + "\n")
             for ext in EXTS:
                 try:
                     ext_fullname = "teinfbot." + prefix + "." + ext
                     self.load_extension(ext_fullname)
-                    print(f"{colorama.Fore.GREEN}[{prefix.upper()}] Success - {ext}")
+                    print(
+                        f"{colorama.Fore.GREEN}[{prefix.upper()}] Success - {ext}")
                 except commands.ExtensionNotFound:
-                    print(f"{colorama.Fore.RED}[{prefix.upper()}] Failed - {ext}")
+                    print(
+                        f"{colorama.Fore.RED}[{prefix.upper()}] Failed - {ext}")
 
             print(colorama.Style.RESET_ALL)
 

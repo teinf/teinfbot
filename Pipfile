@@ -12,10 +12,10 @@ gtts = "*"
 sqlalchemy = "*"
 beautifulsoup4 = "*"
 colorama = "*"
-psycopg2 = "*"
 discord-py-slash-command = "*"
 pynacl = "*"
 youtube-dl = "*"
+mysqlclient = "*"
 
 [requires]
 python_version = "3.9"

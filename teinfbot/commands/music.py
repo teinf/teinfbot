@@ -58,11 +58,23 @@ class Music(commands.Cog):
 
         if len(self.queue) >= 1:
             self.queue.append(music_video)
-            await ctx.send(f"Dodano {music_video.title} do kolejki")
+            em = discord.Embed(
+                title="MUSIC BOT",
+                description=f"Dodano {music_video.title} do kolejki\n{music_video.webpage}",
+                color=discord.Colour.gold()
+            )
+            em.set_image(url=music_video.thumbnail)
+            await ctx.send(embed=em)
             return
 
         elif len(self.queue) == 0:
-            await ctx.send(f"Odtwarzam {music_video.title}")
+            em = discord.Embed(
+                title="MUSIC BOT",
+                description=f"Odtwarzam {music_video.title}\n{music_video.webpage}",
+                color=discord.Colour.green()
+            )
+            em.set_image(url=music_video.thumbnail)
+            await ctx.send(embed=em)
             self.queue.append(music_video)
 
         voice: discord.VoiceClient = discord.utils.get(

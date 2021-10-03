@@ -8,12 +8,14 @@ from teinfbot.utils.paths import *
 
 
 class TeinfBot(commands.Bot):
-    def __init__(self):
+    def __init__(self, debug: bool):
         super().__init__(
             command_prefix=".",
             intents=discord.Intents.all(),
             reconnect=True,
         )
+
+        self.debug = debug
 
     def run(self):
         try:
@@ -53,7 +55,7 @@ class TeinfBot(commands.Bot):
         print(colorama.Style.RESET_ALL)
 
     async def bot_close(self):
-        await super().logout()
+        await super().close()
         db_session.close()
 
     async def on_ready(self):

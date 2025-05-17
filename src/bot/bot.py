@@ -2,6 +2,7 @@ import os
 import discord
 from discord.ext import commands
 from discord import app_commands
+from config import config
 
 SRC = os.path.join("src")
 BOT_SRC = os.path.join(SRC, "bot")
@@ -25,9 +26,8 @@ class Bot(commands.Bot):
         await self.tree.sync(guild=self.guild)
 
     async def run_bot(self):
-        token = os.environ.get("ACCESS_TOKEN")
         async with self:
-            await self.start(token)
+            await self.start(config.bot.access_token)
 
     async def retrieve_extensions(self):
         print("Loading  extensions")

@@ -2,6 +2,7 @@ from discord.ext import tasks, commands
 
 from bot import Bot
 from random_nickname import get_random_name
+from config import config
 
 import logging
 
@@ -23,8 +24,12 @@ class NicknameRandomizer(commands.Cog):
         if not guild:
             return
 
-        users_to_change = [239329824361938944]  # Replace with real user IDs
-        channel = guild.get_channel(720628646267584572)  # Logging channel
+        users_to_change = [
+            config.dc.random_nickname_user_id
+        ]  # Replace with real user IDs
+        channel = guild.get_channel(
+            config.dc.random_nickname_channel_id
+        )  # Logging channel
 
         for user_id in users_to_change:
             member = guild.get_member(user_id)

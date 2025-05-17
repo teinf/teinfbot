@@ -1,10 +1,10 @@
-import os
 import asyncio
 from bot import Bot
+from config import config
 
 
 async def main():
-    tfbot = Bot(int(os.environ.get("GUILD")))
+    tfbot = Bot(config.dc.guild_id)
     await tfbot.run_bot()
 
 

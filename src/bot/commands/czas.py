@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
+from bot.utils.time_parser import TimeParser
 
 from bot import Bot
-from bot.utils.time import getTimeDescFromMinutes
 from db.models import User
 import bot.utils.discord as dc
 
@@ -28,7 +28,7 @@ class Czas(commands.Cog):
 
             em = discord.Embed(
                 title="Czas spędzony na serwerze",
-                description=f"{user.name} spędził {getTimeDescFromMinutes(db_user.time_spent)} na serwerze",
+                description=f"{user.name} spędził {str(TimeParser(db_user.time_spent * 60))} na serwerze",
                 color=discord.Colour.green(),
             )
             await interaction.response.send_message(embed=em)
@@ -52,7 +52,7 @@ class Czas(commands.Cog):
 
             description = ""
             for i, user in enumerate(top_users, 1):
-                description += f"{i}. {dc.mention_user(user.discord_id)} - {getTimeDescFromMinutes(user.time_spent)}\n"
+                description += f"{i}. {dc.mention_user(user.discord_id)} - {TimeParser(user.time_spent * 60)}\n"
 
             em = discord.Embed(
                 title=f"Top {number} użytkowników pod względem spędzonego czasu",

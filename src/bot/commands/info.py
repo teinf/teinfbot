@@ -5,6 +5,7 @@ from discord import app_commands
 from bot import Bot
 from db.models import User
 from bot.utils.discord import mention_user
+from bot.utils.time_parser import TimeParser
 
 import logging
 
@@ -25,7 +26,7 @@ class Info(commands.Cog):
             informacje = {
                 "#": mention_user(member.id),
                 "Nick": member.name,
-                "Spędzony czas": db_user.time_spent,
+                "Spędzony czas": str(TimeParser(db_user.time_spent*60)),
                 "ID": member.id,
                 "Status": member.status,
                 "Najwyższa rola": member.top_role.name,

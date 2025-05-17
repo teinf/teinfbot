@@ -49,7 +49,7 @@ class TimeParser:
             fform.append(f"{self.hours} {self.hours_form}")
         if self.minutes > 0:
             fform.append(f"{self.minutes} {self.minutes_form}")
-        if self.seconds > 0:
+        if self.seconds >= 0:
             fform.append(f"{self.seconds} {self.seconds_form}")
 
         return ", ".join(fform)

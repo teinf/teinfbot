@@ -1,5 +1,5 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 def getenv(key: str, default=None, cast_type=str):
@@ -35,9 +35,9 @@ class BotConfig:
 
 @dataclass
 class Config:
-    db: DatabaseConfig = DatabaseConfig()
-    dc: DiscordConfig = DiscordConfig()
-    bot: BotConfig = BotConfig()
+    db: DatabaseConfig = field(default_factory=DatabaseConfig)
+    dc: DiscordConfig = field(default_factory=DiscordConfig)
+    bot: BotConfig = field(default_factory=BotConfig)
 
 
 config = Config()
